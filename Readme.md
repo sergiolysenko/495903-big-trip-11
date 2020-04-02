@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Sergey Lysenko](https://up.htmlacademy.ru/ecmascript/11/user/495903).
-* Наставник: `Неизвестно`.
+* Наставник: `Илья Бердюгин`.
 
 ---
 
