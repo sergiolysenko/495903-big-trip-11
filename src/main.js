@@ -48,7 +48,7 @@ const createMainFilterTemplate = () => {
 
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
-  `)
+  `);
 };
 
 const createMainTripSortTemplate = () => {
