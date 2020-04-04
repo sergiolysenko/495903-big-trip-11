@@ -324,7 +324,7 @@ const createEventItemTemplate = () => {
 
 const render = (container, element, place) => {
   container.insertAdjacentHTML(place, element);
-}
+};
 const headerTripMainBlock = document.querySelector(`.trip-main`);
 render(headerTripMainBlock, createMainInfoTemplate(), `afterbegin`);
 
@@ -343,13 +343,13 @@ const tripEventsBlock = pageMainBlock.querySelector(`.trip-events`);
 const placeForTripSort = tripEventsBlock.querySelector(`h2`);
 render(placeForTripSort, createMainTripSortTemplate(), `afterend`);
 
-render(tripEventsBlock, createTripDaysContainer(), 'beforeend');
+render(tripEventsBlock, createTripDaysContainer(), `beforeend`);
 const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
 render(tripDaysBlock, createTripDayContainer(), `beforeend`);
 
 const tripEventsDayList = tripDaysBlock.querySelector(`.trip-events__list`);
 render(tripEventsDayList, createEventEditTemplate(), `beforeend`);
 
-for(let i = 0; i < EVENTS_COUNT; i++) {
+for (let i = 0; i < EVENTS_COUNT; i++) {
   render(tripEventsDayList, createEventItemTemplate(), `beforeend`);
 }
