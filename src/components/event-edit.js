@@ -22,6 +22,7 @@ const createTransferList = (routePointsItems, event) => {
     );
   }).join(`\n`);
 };
+
 const createCitiesList = (citiesList) => {
   return citiesList.map((item) => {
     return `<option value="${item}"></option>`;

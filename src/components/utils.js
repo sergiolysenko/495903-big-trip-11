@@ -3,6 +3,7 @@ import {MONTH_NAMES} from "./constants.js";
 const randomNumder = (min, max) => {
   return Math.round(min - 0.5 + Math.random() * (max - min + 1));
 };
+
 const castTimeFormat = (value) => {
   return value < 10 ? `0${value}` : String(value);
 };
@@ -20,29 +21,6 @@ const formatDate = (date) => {
   const year = date.getFullYear().toString().substring(2);
   return `${day}/${month}/${year}`;
 };
-
-const separateEventsOnMonth = (arrEvents) => {
-  const separateEvents = (events, method) => {
-    let containerForArrays = {};
-    events.forEach((event) => {
-      const dayOrMonth = method === `month` ? event.startTime.getMonth() : event.startTime.getDate();
-      if (typeof containerForArrays[dayOrMonth] === `undefined`) {
-        containerForArrays[dayOrMonth] = [];
-      }
-      containerForArrays[dayOrMonth].push(event);
-    });
-    let arrWithArr = Object.values(containerForArrays);
-    return arrWithArr;
-  };
-  const separatedMonth = separateEvents(arrEvents, `month`);
-  const separatedOnDays = separatedMonth.map((month) => separateEvents(month));
-  return separatedOnDays;
-};
-
-const formatDateForTripDay = (date) => {
-  return `${MONTH_NAMES[date.getMonth()]} ${date.getDate()}`;
-};
-
 
 const formatMonth = (month) => `${MONTH_NAMES[month]}`;
 
@@ -97,5 +75,4 @@ const structureEventsByDays = (eventsList) => {
 };
 
 export {randomNumder, formatTime, formatDate,
-  routePointDuration, formatDateForTripDay,
-  separateEventsOnMonth, structureEventsByDays, formatMonth};
+  routePointDuration, structureEventsByDays, formatMonth};
