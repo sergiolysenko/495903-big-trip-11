@@ -4,11 +4,16 @@ import {createMainNavTemplate} from "./components/main-nav.js";
 import {createMainFilterTemplate} from "./components/main-filter.js";
 import {createMainTripSortTemplate} from "./components/main-trip-sort.js";
 import {createTripDaysContainer} from "./components/tripdays-container.js";
-import {createTripDayContainer} from "./components/tripday-container.js";
+import {createTrip} from "./components/tripday-container.js";
 import {createEventEditTemplate} from "./components/event-edit.js";
-import {createEventItemTemplate} from "./components/event-item.js";
+import {structureEventsByDays} from "./components/utils.js";
+import {generateEvents} from "./mock/event.js";
 
-const EVENTS_COUNT = 3;
+const EVENTS_COUNT = 16;
+const events = generateEvents(EVENTS_COUNT);
+const eventsSorted = events.slice().sort((a, b) => a.startTime - b.startTime);
+const firstEvent = eventsSorted.shift();
+const structureEvents = structureEventsByDays(eventsSorted);
 
 const render = (container, element, place) => {
   container.insertAdjacentHTML(place, element);
@@ -33,11 +38,8 @@ render(placeForTripSort, createMainTripSortTemplate(), `afterend`);
 
 render(tripEventsBlock, createTripDaysContainer(), `beforeend`);
 const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
-render(tripDaysBlock, createTripDayContainer(), `beforeend`);
+
+render(tripDaysBlock, createTrip(structureEvents), `beforeend`);
 
 const tripEventsDayList = tripDaysBlock.querySelector(`.trip-events__list`);
-render(tripEventsDayList, createEventEditTemplate(), `beforeend`);
-
-for (let i = 0; i < EVENTS_COUNT; i++) {
-  render(tripEventsDayList, createEventItemTemplate(), `beforeend`);
-}
+render(tripEventsDayList, createEventEditTemplate(firstEvent), `afterbegin`);
