@@ -1,26 +1,23 @@
 import {routePoints} from "./constants.js";
-import {formatTime, routePointDuration} from "./utils.js";
+import {formatTime, routePointDuration, createElement} from "./utils.js";
 
 const generateOffers = (offers) => {
   const MAX_OFFERS = 2;
   return offers.map((offer, index) => {
-    return (`
-    <li class="event__offer ${index > MAX_OFFERS ? `visually-hidden` : ``}">
+    return (`<li class="event__offer ${index > MAX_OFFERS ? `visually-hidden` : ``}">
       <span class="event__offer-title">${offer.title}</span>
       &plus;
       &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
-    </li>
-    `);
+    </li>`);
   }).join(`\n`);
 };
 
-export const createEventItemTemplate = (event) => {
+const createEventItemTemplate = (event) => {
   const {eventType, city, startTime, endTime, price, offers} = event;
   const isOfferShowing = !!offers;
   const wichEventType = routePoints.transfer.includes(eventType) ? `transfer` : `activities`;
 
-  return (`
-    <li class="trip-events__item">
+  return (`<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType}.png" alt="Event type icon">
@@ -49,6 +46,25 @@ export const createEventItemTemplate = (event) => {
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>
-  `);
+    </li>`);
 };
+
+export class EventItemComponent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+  getTemplate() {
+    return createEventItemTemplate(this._event);
+  }
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+  removeElement() {
+    this._element = null;
+  }
+}
+
