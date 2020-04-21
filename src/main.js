@@ -12,20 +12,25 @@ import {generateEvents} from "./mock/event.js";
 
 const EVENTS_COUNT = 16;
 const allEvents = generateEvents(EVENTS_COUNT);
-
+const eventsSorted = allEvents.slice().sort((a, b) => a.startTime - b.startTime);
+// Рендер блока инфо в шапке Маршрут и даты
 const headerTripMainBlock = document.querySelector(`.trip-main`);
-
 render(headerTripMainBlock, new MainInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
 
+// Рендер блока инфо в шапке общая стоимость поездки
 const tripInfoBlock = headerTripMainBlock.querySelector(`.trip-info`);
 render(tripInfoBlock, new InfoCostComponent().getElement(), RenderPosition.BEFOREEND);
 
+// Рендер блока в шапке навигация
 const headerTripControlsBlock = headerTripMainBlock.querySelector(`.trip-controls`);
 const placeForInsertNav = headerTripControlsBlock.querySelector(`h2:last-child`);
 render(headerTripControlsBlock, new MainNavComponent().getElement(), RenderPosition.INSERTBEFORE, placeForInsertNav);
 
+// Рендер блока в шапке фильтры
 render(headerTripControlsBlock, new MainFilterComponent().getElement(), RenderPosition.BEFOREEND);
 
+// Функция отрисовки точки маршрута с обработчиками
+// открытия и закрытия формы редактирования
 const renderEvent = (eventListElement, event) => {
   const onEditButtonClick = () => {
     eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
@@ -47,7 +52,9 @@ const renderEvent = (eventListElement, event) => {
 
   render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 };
-
+// Рендер всего поля с маршрутами путешествия: блок сортировки,
+// блок для отрисовки дней (TripDays), отрисовка каждого дня и
+// отрисовка каждой точки маршрута.
 const renderTrip = (events) => {
   const pageMainBlock = document.querySelector(`.page-main`);
   const tripEventsBlock = pageMainBlock.querySelector(`.trip-events`);
@@ -55,12 +62,15 @@ const renderTrip = (events) => {
   render(tripEventsBlock, new TripDaysComponent().getElement(), RenderPosition.BEFOREEND);
   const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
 
-  const eventsSorted = events.slice().sort((a, b) => a.startTime - b.startTime);
-  const structureEvents = structureEventsByDays(eventsSorted);
+  // структуризация событий по датам
+  const structureEvents = structureEventsByDays(events);
 
+  // отрисовка блока для каждого дня маршрута
   structureEvents.forEach((day) => {
     const tripDayComponent = new TripDayComponent(day);
     const eventsListElement = tripDayComponent.getElement().querySelector(`.trip-events__list`);
+
+    // отрисовка всех точек маршрута текущего дня
     day.events.forEach((event) => {
       renderEvent(eventsListElement, event);
     });
@@ -68,5 +78,5 @@ const renderTrip = (events) => {
   });
 };
 
-renderTrip(allEvents);
+renderTrip(eventsSorted);
 
