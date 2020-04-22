@@ -1,45 +1,82 @@
-import {createMainInfoTemplate} from "./components/main-info.js";
-import {createInfoCostTemplate} from "./components/info-cost.js";
-import {createMainNavTemplate} from "./components/main-nav.js";
-import {createMainFilterTemplate} from "./components/main-filter.js";
-import {createMainTripSortTemplate} from "./components/main-trip-sort.js";
-import {createTripDaysContainer} from "./components/tripdays-container.js";
-import {createTrip} from "./components/tripday-container.js";
-import {createEventEditTemplate} from "./components/event-edit.js";
-import {structureEventsByDays} from "./components/utils.js";
+import {structureEventsByDays, RenderPosition, render} from "./components/utils.js";
+import {MainInfoComponent} from "./components/main-info.js";
+import {InfoCostComponent} from "./components/info-cost.js";
+import {MainNavComponent} from "./components/main-nav.js";
+import {MainFilterComponent} from "./components/main-filter.js";
+import {MainTripSortComponent} from "./components/main-trip-sort.js";
+import {TripDaysComponent} from "./components/tripdays-container.js";
+import {EventItemComponent} from "./components/event-item.js";
+import {EventItemEditComponent} from "./components/event-edit.js";
+import {TripDayComponent} from "./components/tripday-container.js";
 import {generateEvents} from "./mock/event.js";
 
 const EVENTS_COUNT = 16;
-const events = generateEvents(EVENTS_COUNT);
-const eventsSorted = events.slice().sort((a, b) => a.startTime - b.startTime);
-const firstEvent = eventsSorted.shift();
-const structureEvents = structureEventsByDays(eventsSorted);
-
-const render = (container, element, place) => {
-  container.insertAdjacentHTML(place, element);
-};
+const allEvents = generateEvents(EVENTS_COUNT);
+const eventsSorted = allEvents.slice().sort((a, b) => a.startTime - b.startTime);
+// Рендер блока инфо в шапке Маршрут и даты
 const headerTripMainBlock = document.querySelector(`.trip-main`);
-render(headerTripMainBlock, createMainInfoTemplate(), `afterbegin`);
+render(headerTripMainBlock, new MainInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
 
+// Рендер блока инфо в шапке общая стоимость поездки
 const tripInfoBlock = headerTripMainBlock.querySelector(`.trip-info`);
-render(tripInfoBlock, createInfoCostTemplate(), `beforeend`);
+render(tripInfoBlock, new InfoCostComponent().getElement(), RenderPosition.BEFOREEND);
 
+// Рендер блока в шапке навигация
 const headerTripControlsBlock = headerTripMainBlock.querySelector(`.trip-controls`);
-const placeForInsertNav = headerTripControlsBlock.querySelector(`h2`);
-render(placeForInsertNav, createMainNavTemplate(), `afterend`);
+const placeForInsertNav = headerTripControlsBlock.querySelector(`h2:last-child`);
+render(headerTripControlsBlock, new MainNavComponent().getElement(), RenderPosition.INSERTBEFORE, placeForInsertNav);
 
-const placeForInsertFilter = headerTripControlsBlock.querySelector(`h2:last-child`);
-render(placeForInsertFilter, createMainFilterTemplate(), `afterend`);
+// Рендер блока в шапке фильтры
+render(headerTripControlsBlock, new MainFilterComponent().getElement(), RenderPosition.BEFOREEND);
 
-const pageMainBlock = document.querySelector(`.page-main`);
-const tripEventsBlock = pageMainBlock.querySelector(`.trip-events`);
-const placeForTripSort = tripEventsBlock.querySelector(`h2`);
-render(placeForTripSort, createMainTripSortTemplate(), `afterend`);
+// Функция отрисовки точки маршрута с обработчиками
+// открытия и закрытия формы редактирования
+const renderEvent = (eventListElement, event) => {
+  const onEditButtonClick = () => {
+    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  };
+  const onSubmitButtonClick = (evt) => {
+    evt.preventDefault();
+    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
 
-render(tripEventsBlock, createTripDaysContainer(), `beforeend`);
-const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
+  const eventComponent = new EventItemComponent(event);
+  const eventEditButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
+  eventEditButton.addEventListener(`click`, onEditButtonClick);
 
-render(tripDaysBlock, createTrip(structureEvents), `beforeend`);
+  const eventEditComponent = new EventItemEditComponent(event);
+  const editForm = eventEditComponent.getElement().querySelector(`.event--edit`);
+  const rollUpButton = eventEditComponent.getElement().querySelector(`.event__rollup-btn`);
+  rollUpButton.addEventListener(`click`, onSubmitButtonClick);
+  editForm.addEventListener(`submit`, onSubmitButtonClick);
 
-const tripEventsDayList = tripDaysBlock.querySelector(`.trip-events__list`);
-render(tripEventsDayList, createEventEditTemplate(firstEvent), `afterbegin`);
+  render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+};
+// Рендер всего поля с маршрутами путешествия: блок сортировки,
+// блок для отрисовки дней (TripDays), отрисовка каждого дня и
+// отрисовка каждой точки маршрута.
+const renderTrip = (events) => {
+  const pageMainBlock = document.querySelector(`.page-main`);
+  const tripEventsBlock = pageMainBlock.querySelector(`.trip-events`);
+  render(tripEventsBlock, new MainTripSortComponent().getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsBlock, new TripDaysComponent().getElement(), RenderPosition.BEFOREEND);
+  const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
+
+  // структуризация событий по датам
+  const structureEvents = structureEventsByDays(events);
+
+  // отрисовка блока для каждого дня маршрута
+  structureEvents.forEach((day) => {
+    const tripDayComponent = new TripDayComponent(day);
+    const eventsListElement = tripDayComponent.getElement().querySelector(`.trip-events__list`);
+
+    // отрисовка всех точек маршрута текущего дня
+    day.events.forEach((event) => {
+      renderEvent(eventsListElement, event);
+    });
+    render(tripDaysBlock, tripDayComponent.getElement(), RenderPosition.BEFOREEND);
+  });
+};
+
+renderTrip(eventsSorted);
+

@@ -1,22 +1,36 @@
-import {formatMonth} from "./utils.js";
-import {createEventItemTemplate} from "./event-item.js";
+import {formatMonth, createElement} from "./utils.js";
 
 const createTripDay = (tripDay) => {
-  const {day, month, year, dayNumber, events} = tripDay;
+  const {day, month, year, dayNumber /* , events */} = tripDay;
 
-  return (`
-    <li class="trip-days__item  day">
+  return (`<li class="trip-days__item  day">
       <div class="day__info">
         <span class="day__counter">${dayNumber}</span>
         <time class="day__date" datetime="${year}-${month}-${day}">${formatMonth(month)} ${day}</time>
       </div>
       <ul class="trip-events__list">
-        ${events.map((event) => createEventItemTemplate(event)).join(`\n`)}
+        
       </ul>
     </li>
   `);
 };
 
-export const createTrip = (allEvents) => {
-  return allEvents.map((day) => createTripDay(day)).join(`\n`);
-};
+
+export class TripDayComponent {
+  constructor(tripDay) {
+    this._tripDay = tripDay;
+    this._element = null;
+  }
+  getTemplate() {
+    return createTripDay(this._tripDay);
+  }
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+  removeElement() {
+    this._element = null;
+  }
+}

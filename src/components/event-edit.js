@@ -1,25 +1,24 @@
 import {routePoints, cities, offersItems} from "./constants.js";
-import {formatTime, formatDate} from "./utils.js";
+import {formatTime, formatDate, createElement} from "./utils.js";
 
 
 const createTransferList = (routePointsItems, event) => {
   return routePointsItems.map((item, index) => {
     const lowerCaseItem = item.toLowerCase();
-    return (`
-    <div class="event__type-item">
+    const isChecked = item === event ? `checked` : ``;
+    return (`<div class="event__type-item">
       <input 
         id="event-type-${lowerCaseItem}-${index}" 
         class="event__type-input  visually-hidden" 
         type="radio" name="event-type" 
-        value="${lowerCaseItem}" ${item === event ? `checked` : ``}>
+        value="${lowerCaseItem}" ${isChecked}>
       <label 
         class="event__type-label  
         event__type-label--${lowerCaseItem}" 
         for="event-type-${lowerCaseItem}-${index}">
           ${item}
         </label>
-    </div>`
-    );
+    </div>`);
   }).join(`\n`);
 };
 
@@ -28,16 +27,18 @@ const createCitiesList = (citiesList) => {
     return `<option value="${item}"></option>`;
   }).join(`\n`);
 };
+
 const createOffers = (offersConst, eventOffers) => {
   return offersConst.map((offer) => {
     const isEvent = !!eventOffers;
     const isOfferChecked = isEvent ? eventOffers.find((item) => item.type === offer.type) : false;
-    return `
-    <div class="event__offer-selector">
+    const isChecked = isOfferChecked ? `checked` : ``;
+
+    return `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" 
       id="event-offer-${offer.type}-1" type="checkbox" 
       name="event-offer-${offer.type}"  
-      ${isOfferChecked ? `checked` : ``}>
+      ${isChecked}>
       <label class="event__offer-label" for="event-offer-${offer.type}-1">
         <span class="event__offer-title">${offer.title}</span>
         &plus;
@@ -53,7 +54,7 @@ const createImgMarkup = (eventPhoto) => {
   }).join(`\n`);
 };
 
-export const createEventEditTemplate = (event) => {
+const createEventEditTemplate = (event) => {
   const {eventType, city, startTime, endTime, price,
     isFavorite, offers, description, photo, dayRoute} = event;
 
@@ -62,11 +63,14 @@ export const createEventEditTemplate = (event) => {
   const wichEventType = (eventItemType) => {
     return routePoints.transfer.includes(eventItemType) ? `to` : `in`;
   };
-
   const defaultEventType = `Flight`;
   const defaultCity = `Paris`;
-  return (`
-    <li class="trip-events__item">
+
+  const transferList = createTransferList(routePoints.transfer, `${isEvent ? eventType : defaultEventType}`);
+  const activityList = createTransferList(routePoints.activities, `${isEvent ? eventType : ``}`);
+  const citiesList = createCitiesList(cities);
+
+  return (`<li class="trip-events__item">
     <form class="trip-events__item  event  event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
@@ -81,12 +85,12 @@ export const createEventEditTemplate = (event) => {
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Transfer</legend>
-            ${createTransferList(routePoints.transfer, `${isEvent ? eventType : defaultEventType}`)}            
+            ${transferList}            
           </fieldset>
 
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Activity</legend>
-            ${createTransferList(routePoints.activities, `${isEvent ? eventType : ``}`)}
+            ${activityList}
           </fieldset>
         </div>
       </div>
@@ -99,7 +103,7 @@ export const createEventEditTemplate = (event) => {
         name="event-destination" value="${isEvent ? city : defaultCity}" 
         list="destination-list-1">
         <datalist id="destination-list-1">
-          ${createCitiesList(cities)}
+          ${citiesList}
         </datalist>
       </div>
 
@@ -169,6 +173,24 @@ export const createEventEditTemplate = (event) => {
       </section>`}
     </section>
   </form>
-    </li>
-  `);
+    </li>`);
 };
+
+export class EventItemEditComponent {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+  getTemplate() {
+    return createEventEditTemplate(this._event);
+  }
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+  removeElement() {
+    this._element = null;
+  }
+}
