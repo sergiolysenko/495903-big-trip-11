@@ -4,6 +4,7 @@ import {InfoCostComponent} from "./components/info-cost.js";
 import {MainNavComponent} from "./components/main-nav.js";
 import {MainFilterComponent} from "./components/main-filter.js";
 import {MainTripSortComponent} from "./components/main-trip-sort.js";
+import {NoPoints} from "./components/no-points.js";
 import {TripDaysComponent} from "./components/tripdays-container.js";
 import {EventItemComponent} from "./components/event-item.js";
 import {EventItemEditComponent} from "./components/event-edit.js";
@@ -77,8 +78,14 @@ const renderEvent = (eventListElement, event) => {
 // блок для отрисовки дней (TripDays), отрисовка каждого дня и
 // отрисовка каждой точки маршрута.
 const renderTrip = (events) => {
-  const pageMainBlock = document.querySelector(`.page-main`);
-  const tripEventsBlock = pageMainBlock.querySelector(`.trip-events`);
+  const tripEventsBlock = document.querySelector(`.trip-events`);
+
+  const isNoEvents = !events;
+  if (isNoEvents) {
+    render(tripEventsBlock, new NoPoints().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
+
   render(tripEventsBlock, new MainTripSortComponent().getElement(), RenderPosition.BEFOREEND);
   render(tripEventsBlock, new TripDaysComponent().getElement(), RenderPosition.BEFOREEND);
   const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
