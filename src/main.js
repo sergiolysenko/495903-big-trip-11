@@ -32,23 +32,44 @@ render(headerTripControlsBlock, new MainFilterComponent().getElement(), RenderPo
 // Функция отрисовки точки маршрута с обработчиками
 // открытия и закрытия формы редактирования
 const renderEvent = (eventListElement, event) => {
-  const onEditButtonClick = () => {
+
+  const replaceEventToEdit = () => {
     eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
   };
-  const onSubmitButtonClick = (evt) => {
-    evt.preventDefault();
+  const replaceEditToEvent = () => {
     eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
+
+  const closeEdit = () => {
+    replaceEditToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  };
+
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      closeEdit();
+    }
   };
 
   const eventComponent = new EventItemComponent(event);
   const eventEditButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
-  eventEditButton.addEventListener(`click`, onEditButtonClick);
+  eventEditButton.addEventListener(`click`, () => {
+    replaceEventToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
 
   const eventEditComponent = new EventItemEditComponent(event);
   const editForm = eventEditComponent.getElement().querySelector(`.event--edit`);
   const rollUpButton = eventEditComponent.getElement().querySelector(`.event__rollup-btn`);
-  rollUpButton.addEventListener(`click`, onSubmitButtonClick);
-  editForm.addEventListener(`submit`, onSubmitButtonClick);
+  rollUpButton.addEventListener(`click`, () => {
+    closeEdit();
+  });
+  editForm.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    closeEdit();
+  });
 
   render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 };
