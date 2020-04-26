@@ -80,7 +80,8 @@ const renderEvent = (eventListElement, event) => {
 const renderTrip = (events) => {
   const tripEventsBlock = document.querySelector(`.trip-events`);
 
-  const isNoEvents = !events;
+  const isNoEvents = !events.length;
+
   if (isNoEvents) {
     render(tripEventsBlock, new NoPoints().getElement(), RenderPosition.BEFOREEND);
     return;
