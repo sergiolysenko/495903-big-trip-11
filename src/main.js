@@ -4,6 +4,7 @@ import {InfoCostComponent} from "./components/info-cost.js";
 import {MainNavComponent} from "./components/main-nav.js";
 import {MainFilterComponent} from "./components/main-filter.js";
 import {MainTripSortComponent} from "./components/main-trip-sort.js";
+import {NoPoints} from "./components/no-points.js";
 import {TripDaysComponent} from "./components/tripdays-container.js";
 import {EventItemComponent} from "./components/event-item.js";
 import {EventItemEditComponent} from "./components/event-edit.js";
@@ -32,23 +33,44 @@ render(headerTripControlsBlock, new MainFilterComponent().getElement(), RenderPo
 // Функция отрисовки точки маршрута с обработчиками
 // открытия и закрытия формы редактирования
 const renderEvent = (eventListElement, event) => {
-  const onEditButtonClick = () => {
+
+  const replaceEventToEdit = () => {
     eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
   };
-  const onSubmitButtonClick = (evt) => {
-    evt.preventDefault();
+  const replaceEditToEvent = () => {
     eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
+
+  const closeEdit = () => {
+    replaceEditToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  };
+
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      closeEdit();
+    }
   };
 
   const eventComponent = new EventItemComponent(event);
   const eventEditButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
-  eventEditButton.addEventListener(`click`, onEditButtonClick);
+  eventEditButton.addEventListener(`click`, () => {
+    replaceEventToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
 
   const eventEditComponent = new EventItemEditComponent(event);
   const editForm = eventEditComponent.getElement().querySelector(`.event--edit`);
   const rollUpButton = eventEditComponent.getElement().querySelector(`.event__rollup-btn`);
-  rollUpButton.addEventListener(`click`, onSubmitButtonClick);
-  editForm.addEventListener(`submit`, onSubmitButtonClick);
+  rollUpButton.addEventListener(`click`, () => {
+    closeEdit();
+  });
+  editForm.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    closeEdit();
+  });
 
   render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 };
@@ -56,8 +78,15 @@ const renderEvent = (eventListElement, event) => {
 // блок для отрисовки дней (TripDays), отрисовка каждого дня и
 // отрисовка каждой точки маршрута.
 const renderTrip = (events) => {
-  const pageMainBlock = document.querySelector(`.page-main`);
-  const tripEventsBlock = pageMainBlock.querySelector(`.trip-events`);
+  const tripEventsBlock = document.querySelector(`.trip-events`);
+
+  const isNoEvents = !events.length;
+
+  if (isNoEvents) {
+    render(tripEventsBlock, new NoPoints().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
+
   render(tripEventsBlock, new MainTripSortComponent().getElement(), RenderPosition.BEFOREEND);
   render(tripEventsBlock, new TripDaysComponent().getElement(), RenderPosition.BEFOREEND);
   const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
