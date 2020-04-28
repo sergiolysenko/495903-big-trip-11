@@ -1,5 +1,6 @@
 import {routePoints} from "./constants.js";
-import {formatTime, routePointDuration, createElement} from "./utils.js";
+import {formatTime, routePointDuration} from "./utils.js";
+import {AbstractComponent} from "./abstractComponent.js";
 
 const generateOffers = (offers) => {
   const MAX_OFFERS = 2;
@@ -49,22 +50,14 @@ const createEventItemTemplate = (event) => {
     </li>`);
 };
 
-export class EventItemComponent {
+export class EventItemComponent extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
+
   getTemplate() {
     return createEventItemTemplate(this._event);
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    this._element = null;
   }
 }
 
