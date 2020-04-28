@@ -1,4 +1,4 @@
-import {createElement} from "./utils.js";
+import {AbstractComponent} from "./abstractComponent.js";
 
 const createInfoCostTemplate = () => {
   return (`<p class="trip-info__cost">
@@ -6,20 +6,8 @@ const createInfoCostTemplate = () => {
     </p> `);
 };
 
-export class InfoCostComponent {
-  constructor() {
-    this._element = null;
-  }
+export class InfoCostComponent extends AbstractComponent {
   getTemplate() {
     return createInfoCostTemplate();
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    this._element = null;
   }
 }

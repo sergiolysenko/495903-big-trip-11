@@ -1,4 +1,5 @@
-import {structureEventsByDays, RenderPosition, render} from "./components/utils.js";
+import {structureEventsByDays} from "./utils/common.js";
+import {RenderPosition, render, replace} from "./utils/render.js";
 import {MainInfoComponent} from "./components/main-info.js";
 import {InfoCostComponent} from "./components/info-cost.js";
 import {MainNavComponent} from "./components/main-nav.js";
@@ -16,29 +17,29 @@ const allEvents = generateEvents(EVENTS_COUNT);
 const eventsSorted = allEvents.slice().sort((a, b) => a.startTime - b.startTime);
 // Рендер блока инфо в шапке Маршрут и даты
 const headerTripMainBlock = document.querySelector(`.trip-main`);
-render(headerTripMainBlock, new MainInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
+render(headerTripMainBlock, new MainInfoComponent(), RenderPosition.AFTERBEGIN);
 
 // Рендер блока инфо в шапке общая стоимость поездки
 const tripInfoBlock = headerTripMainBlock.querySelector(`.trip-info`);
-render(tripInfoBlock, new InfoCostComponent().getElement(), RenderPosition.BEFOREEND);
+render(tripInfoBlock, new InfoCostComponent(), RenderPosition.BEFOREEND);
 
 // Рендер блока в шапке навигация
 const headerTripControlsBlock = headerTripMainBlock.querySelector(`.trip-controls`);
 const placeForInsertNav = headerTripControlsBlock.querySelector(`h2:last-child`);
-render(headerTripControlsBlock, new MainNavComponent().getElement(), RenderPosition.INSERTBEFORE, placeForInsertNav);
+render(headerTripControlsBlock, new MainNavComponent(), RenderPosition.INSERTBEFORE, placeForInsertNav);
 
 // Рендер блока в шапке фильтры
-render(headerTripControlsBlock, new MainFilterComponent().getElement(), RenderPosition.BEFOREEND);
+render(headerTripControlsBlock, new MainFilterComponent(), RenderPosition.BEFOREEND);
 
 // Функция отрисовки точки маршрута с обработчиками
 // открытия и закрытия формы редактирования
 const renderEvent = (eventListElement, event) => {
 
   const replaceEventToEdit = () => {
-    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
   const replaceEditToEvent = () => {
-    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
   const closeEdit = () => {
@@ -55,24 +56,21 @@ const renderEvent = (eventListElement, event) => {
   };
 
   const eventComponent = new EventItemComponent(event);
-  const eventEditButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
-  eventEditButton.addEventListener(`click`, () => {
+  eventComponent.setEditButtonClickHandler(() => {
     replaceEventToEdit();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   const eventEditComponent = new EventItemEditComponent(event);
-  const editForm = eventEditComponent.getElement().querySelector(`.event--edit`);
-  const rollUpButton = eventEditComponent.getElement().querySelector(`.event__rollup-btn`);
-  rollUpButton.addEventListener(`click`, () => {
+  eventEditComponent.setRollUpClickHandler(() => {
     closeEdit();
   });
-  editForm.addEventListener(`submit`, (evt) => {
+  eventEditComponent.setSubmitHandler((evt) => {
     evt.preventDefault();
     closeEdit();
   });
 
-  render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 // Рендер всего поля с маршрутами путешествия: блок сортировки,
 // блок для отрисовки дней (TripDays), отрисовка каждого дня и
@@ -83,12 +81,12 @@ const renderTrip = (events) => {
   const isNoEvents = !events.length;
 
   if (isNoEvents) {
-    render(tripEventsBlock, new NoPoints().getElement(), RenderPosition.BEFOREEND);
+    render(tripEventsBlock, new NoPoints(), RenderPosition.BEFOREEND);
     return;
   }
 
-  render(tripEventsBlock, new MainTripSortComponent().getElement(), RenderPosition.BEFOREEND);
-  render(tripEventsBlock, new TripDaysComponent().getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsBlock, new MainTripSortComponent(), RenderPosition.BEFOREEND);
+  render(tripEventsBlock, new TripDaysComponent(), RenderPosition.BEFOREEND);
   const tripDaysBlock = tripEventsBlock.querySelector(`.trip-days`);
 
   // структуризация событий по датам
@@ -103,7 +101,7 @@ const renderTrip = (events) => {
     day.events.forEach((event) => {
       renderEvent(eventsListElement, event);
     });
-    render(tripDaysBlock, tripDayComponent.getElement(), RenderPosition.BEFOREEND);
+    render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
   });
 };
 

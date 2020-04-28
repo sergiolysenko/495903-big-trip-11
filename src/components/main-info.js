@@ -1,4 +1,4 @@
-import {createElement} from "./utils.js";
+import {AbstractComponent} from "./abstractComponent.js";
 
 const createMainInfoTemplate = () => {
   return (`<section class="trip-main__trip-info  trip-info">
@@ -11,21 +11,8 @@ const createMainInfoTemplate = () => {
     </section>`);
 };
 
-export class MainInfoComponent {
-  constructor() {
-    this._element = null;
-  }
+export class MainInfoComponent extends AbstractComponent {
   getTemplate() {
     return createMainInfoTemplate();
   }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    this._element = null;
-  }
 }
-

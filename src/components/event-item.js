@@ -1,5 +1,5 @@
 import {routePoints} from "./constants.js";
-import {formatTime, routePointDuration} from "./utils.js";
+import {formatTime, routePointDuration} from "../utils/common.js";
 import {AbstractComponent} from "./abstractComponent.js";
 
 const generateOffers = (offers) => {
@@ -58,6 +58,11 @@ export class EventItemComponent extends AbstractComponent {
 
   getTemplate() {
     return createEventItemTemplate(this._event);
+  }
+
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
 }
 
