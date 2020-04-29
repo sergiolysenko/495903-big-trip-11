@@ -51,41 +51,39 @@ const renderEvent = (eventListElement, event) => {
 // Рендер всего поля с маршрутами путешествия: блок сортировки,
 // блок для отрисовки дней (TripDays), отрисовка каждого дня и
 // отрисовка каждой точки маршрута.
-const renderTrip = (eventsBlock, events) => {
-  const isNoEvents = !events.length;
-
-  if (isNoEvents) {
-    render(eventsBlock, new NoPoints(), RenderPosition.BEFOREEND);
-    return;
-  }
-
-  render(eventsBlock, new MainTripSortComponent(), RenderPosition.BEFOREEND);
-  render(eventsBlock, new TripDaysComponent(), RenderPosition.BEFOREEND);
-  const tripDaysBlock = eventsBlock.querySelector(`.trip-days`);
-
-  // структуризация событий по датам
-  const structureEvents = structureEventsByDays(events);
-
-  // отрисовка блока для каждого дня маршрута
-  structureEvents.forEach((day) => {
-    const tripDayComponent = new TripDayComponent(day);
-    const eventsListElement = tripDayComponent.getElement().querySelector(`.trip-events__list`);
-
-    // отрисовка всех точек маршрута текущего дня
-    day.events.forEach((event) => {
-      renderEvent(eventsListElement, event);
-    });
-    render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
-  });
-};
 
 class TripController {
   constructor(container) {
     this._container = container;
+    this._noPointsComponent = new NoPoints();
+    this._mainTripSortComponent = new MainTripSortComponent();
+    this._tripDaysComponent = new TripDaysComponent();
   }
 
   render(events) {
-    renderTrip(this._container, events);
+    const container = this._container;
+    const isNoEvents = !events.length;
+    if (isNoEvents) {
+      render(container, this._noPointsComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    render(container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
+    render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
+    const tripDaysBlock = container.querySelector(`.trip-days`);
+    // структуризация событий по датам
+    const structureEvents = structureEventsByDays(events);
+    // отрисовка блока для каждого дня маршрута
+    structureEvents.forEach((day) => {
+      const tripDayComponent = new TripDayComponent(day);
+      const eventsListElement = tripDayComponent.getElement()
+        .querySelector(`.trip-events__list`);
+      // отрисовка всех точек маршрута текущего дня
+      day.events.forEach((event) => {
+        renderEvent(eventsListElement, event);
+      });
+      render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+    });
   }
 }
 
