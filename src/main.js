@@ -21,7 +21,7 @@ render(tripInfoBlock, new InfoCostComponent(), RenderPosition.BEFOREEND);
 // Рендер блока в шапке навигация
 const headerTripControlsBlock = headerTripMainBlock.querySelector(`.trip-controls`);
 const placeForInsertNav = headerTripControlsBlock.querySelector(`h2:last-child`);
-render(headerTripControlsBlock, new MainNavComponent(), RenderPosition.INSERTBEFORE, placeForInsertNav);
+render(placeForInsertNav, new MainNavComponent(), RenderPosition.INSERTBEFORE, placeForInsertNav);
 
 // Рендер блока в шапке фильтры
 render(headerTripControlsBlock, new MainFilterComponent(), RenderPosition.BEFOREEND);
