@@ -1,6 +1,6 @@
 import {routePoints, cities, offersItems} from "./constants.js";
-import {formatTime, formatDate, createElement} from "./utils.js";
-
+import {formatTime, formatDate} from "../utils/common.js";
+import {AbstractComponent} from "./abstractComponent.js";
 
 const createTransferList = (routePointsItems, event) => {
   return routePointsItems.map((item, index) => {
@@ -176,21 +176,24 @@ const createEventEditTemplate = (event) => {
     </li>`);
 };
 
-export class EventItemEditComponent {
+export class EventItemEditComponent extends AbstractComponent {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
+
   getTemplate() {
     return createEventEditTemplate(this._event);
   }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+
+  setRollUpClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
   }
-  removeElement() {
-    this._element = null;
+
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`.event--edit`)
+      .addEventListener(`submit`, handler);
   }
 }
+

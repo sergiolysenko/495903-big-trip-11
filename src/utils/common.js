@@ -1,4 +1,4 @@
-import {MONTH_NAMES} from "./constants.js";
+import {MONTH_NAMES} from "../components/constants.js";
 
 const randomNumder = (min, max) => {
   return Math.round(min - 0.5 + Math.random() * (max - min + 1));
@@ -74,32 +74,5 @@ const structureEventsByDays = (eventsList) => {
   return arrForDays;
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-  return newElement.firstChild;
-};
-
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  INSERTBEFORE: `insertbefore`,
-};
-
-const render = (container, element, place, insBefore) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-    case RenderPosition.INSERTBEFORE:
-      container.insertBefore(element, insBefore);
-      break;
-  }
-};
-
 export {randomNumder, formatTime, formatDate,
-  routePointDuration, structureEventsByDays, formatMonth,
-  createElement, RenderPosition, render};
+  routePointDuration, structureEventsByDays, formatMonth};

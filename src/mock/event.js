@@ -1,5 +1,5 @@
 import {routePoints, cities, offersItems} from "../components/constants.js";
-import {randomNumder} from "../components/utils.js";
+import {randomNumder} from "../utils/common.js";
 
 const generatePhotoList = () => {
   return new Array(randomNumder(1, 5)).fill(``).map(()=> {
