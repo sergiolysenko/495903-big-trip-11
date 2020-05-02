@@ -58,10 +58,10 @@ const getSortedEvents = (events, sortType) => {
       sortedEvents = structureEventsByDays(eventsCopy);
       break;
     case SortType.PRICE:
-      sortedEvents = eventsCopy.sort((a, b) => a.price - b.price);
+      sortedEvents = eventsCopy.sort((a, b) => b.price - a.price);
       break;
     case SortType.TIME:
-      sortedEvents = eventsCopy.sort((a, b) => (a.endTime - a.startTime) - (b.endTime - b.startTime));
+      sortedEvents = eventsCopy.sort((a, b) => (b.endTime - b.startTime) - (a.endTime - a.startTime));
       break;
   }
   return sortedEvents;
