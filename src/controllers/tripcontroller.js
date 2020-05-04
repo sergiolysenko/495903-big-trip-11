@@ -73,55 +73,52 @@ class TripController {
     this._noPointsComponent = new NoPoints();
     this._mainTripSortComponent = new MainTripSortComponent();
     this._tripDaysComponent = new TripDaysComponent();
+    this._tripDayComponent = new TripDayComponent();
   }
 
-  render(points) {
+  renderTrip(points) {
     const container = this._container;
     const isNoPoints = !points.length;
     if (isNoPoints) {
       render(container, this._noPointsComponent, RenderPosition.BEFOREEND);
       return;
     }
-
-    // функция отрисовки всех событий
-    const renderEvents = (eventsList, tripDayComponent) => {
-      const eventsListElement = tripDayComponent.getElement()
-      .querySelector(`.trip-events__list`);
-      eventsList.forEach((event) => {
-        renderEvent(eventsListElement, event);
-      });
-    };
-    // В зависимости от сортировки отрисуется:
-    // Сортировка Евентс - каждый день маршрута и точки маршрута в нем
-    // Другие сортировки - один блок дня и сразу все точки маршрута
-    const renderDays = (sortedEvents) => {
-      render(container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
-      render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
-      const tripDaysBlock = container.querySelector(`.trip-days`);
-
-      const isEventsStructured = sortedEvents[0].hasOwnProperty(`day`);
-      if (isEventsStructured) {
-        sortedEvents.forEach((day) => {
-          const tripDayComponent = new TripDayComponent(day);
-          renderEvents(day.events, tripDayComponent);
-          render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
-        });
-      } else {
-        const tripDayComponent = new TripDayComponent();
-        renderEvents(sortedEvents, tripDayComponent);
-        render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
-      }
-    };
-    // структуризация событий по датам
     const structureEvents = structureEventsByDays(points);
-    renderDays(structureEvents);
+    this._renderDays(structureEvents);
 
     this._mainTripSortComponent.setSortTypeChangeHandler((sortType) => {
       container.innerHTML = ``;
       this._tripDaysComponent.removeElement();
       const sortedEvents = getSortedEvents(points, sortType);
-      renderDays(sortedEvents);
+      this._renderDays(sortedEvents);
     });
+  }
+
+  _renderEvents(eventsList, tripDayComponent) {
+    const eventsListElement = tripDayComponent.getElement()
+    .querySelector(`.trip-events__list`);
+    eventsList.forEach((event) => {
+      renderEvent(eventsListElement, event);
+    });
+  }
+
+  _renderDays(sortedEvents) {
+    render(this._container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
+    render(this._container, this._tripDaysComponent, RenderPosition.BEFOREEND);
+    const tripDaysBlock = this._container.querySelector(`.trip-days`);
+
+    const isEventsStructured = sortedEvents[0].hasOwnProperty(`day`);
+    if (isEventsStructured) {
+      sortedEvents.forEach((day) => {
+        const tripDayComponent = new TripDayComponent(day);
+        this._renderEvents(day.events, tripDayComponent);
+        render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+      });
+    } else {
+      const tripDayComponent = new TripDayComponent();
+      this._renderEvents(sortedEvents, tripDayComponent);
+      render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+    }
   }
 }
 

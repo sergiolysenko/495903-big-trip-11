@@ -28,4 +28,4 @@ render(headerTripControlsBlock, new MainFilterComponent(), RenderPosition.BEFORE
 
 const tripEventsBlock = document.querySelector(`.trip-events`);
 const tripController = new TripController(tripEventsBlock);
-tripController.render(eventsSorted);
+tripController.renderTrip(eventsSorted);
