@@ -20,7 +20,7 @@ const replace = (newComponent, oldComponent) => {
   }
 };
 
-const render = (container, component, place, insBefore) => {
+const render = (container, component, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(component.getElement());
@@ -29,7 +29,7 @@ const render = (container, component, place, insBefore) => {
       container.append(component.getElement());
       break;
     case RenderPosition.INSERTBEFORE:
-      container.insertBefore(component.getElement(), insBefore);
+      container.before(component.getElement());
       break;
   }
 };

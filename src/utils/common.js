@@ -31,8 +31,7 @@ const routePointDuration = (start, end) => {
   const durationHour = isMinNegative ? end.getHours() - start.getHours() - 1 : end.getHours() - start.getHours();
   const isHourNegative = durationHour < 0;
   const hours = isHourNegative ? 24 + durationHour : durationHour;
-  const durationDayTemp = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 3600 * 24));
-  const durationDay = isHourNegative ? durationDayTemp - 1 : durationDayTemp;
+  const durationDay = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 3600 * 24)) - 1;
   const isPartShoing = (time, letter) => time === 0 ? `` : time + letter;
   const date = `${isPartShoing(durationDay, `D`)} ${isPartShoing(hours, `H`)} ${isPartShoing(minutes, `M`)}`;
   return date;

@@ -2,12 +2,16 @@ import {formatMonth} from "../utils/common.js";
 import {AbstractComponent} from "./abstractComponent.js";
 
 const createTripDay = (tripDay) => {
-  const {day, month, year, dayNumber /* , events */} = tripDay;
+  const {day, month, year, dayNumber} = tripDay || {};
+  const isTripDaysSortByEvents = !!tripDay;
 
   return (`<li class="trip-days__item  day">
       <div class="day__info">
-        <span class="day__counter">${dayNumber}</span>
-        <time class="day__date" datetime="${year}-${month}-${day}">${formatMonth(month)} ${day}</time>
+      ${isTripDaysSortByEvents ?
+      `<span class="day__counter">${dayNumber}</span>
+        <time class="day__date" datetime="${year}-${month}-${day}">${formatMonth(month)} ${day}</time>`
+      : ``
+    }
       </div>
       <ul class="trip-events__list">
         
@@ -26,3 +30,4 @@ export class TripDayComponent extends AbstractComponent {
     return createTripDay(this._tripDay);
   }
 }
+

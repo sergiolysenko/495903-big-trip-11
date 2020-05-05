@@ -1,6 +1,6 @@
 import {structureEventsByDays} from "../utils/common.js";
 import {RenderPosition, render, replace} from "../utils/render.js";
-import {MainTripSortComponent} from "../components/main-trip-sort.js";
+import {MainTripSortComponent, SortType} from "../components/main-trip-sort.js";
 import {NoPoints} from "../components/no-points.js";
 import {TripDaysComponent} from "../components/tripdays-container.js";
 import {EventItemComponent} from "../components/event-item.js";
@@ -48,9 +48,24 @@ const renderEvent = (eventListElement, event) => {
 
   render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
-// Рендер всего поля с маршрутами путешествия: блок сортировки,
-// блок для отрисовки дней (TripDays), отрисовка каждого дня и
-// отрисовка каждой точки маршрута.
+
+const getSortedEvents = (events, sortType) => {
+  let sortedEvents = [];
+  const eventsCopy = events.slice();
+
+  switch (sortType) {
+    case SortType.EVENT:
+      sortedEvents = structureEventsByDays(eventsCopy);
+      break;
+    case SortType.PRICE:
+      sortedEvents = eventsCopy.sort((a, b) => b.price - a.price);
+      break;
+    case SortType.TIME:
+      sortedEvents = eventsCopy.sort((a, b) => (b.endTime - b.startTime) - (a.endTime - a.startTime));
+      break;
+  }
+  return sortedEvents;
+};
 
 class TripController {
   constructor(container) {
@@ -58,32 +73,52 @@ class TripController {
     this._noPointsComponent = new NoPoints();
     this._mainTripSortComponent = new MainTripSortComponent();
     this._tripDaysComponent = new TripDaysComponent();
+    this._tripDayComponent = new TripDayComponent();
   }
 
-  render(events) {
+  renderTrip(points) {
     const container = this._container;
-    const isNoEvents = !events.length;
-    if (isNoEvents) {
+    const isNoPoints = !points.length;
+    if (isNoPoints) {
       render(container, this._noPointsComponent, RenderPosition.BEFOREEND);
       return;
     }
+    const structureEvents = structureEventsByDays(points);
+    this._renderDays(structureEvents);
 
-    render(container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
-    render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
-    const tripDaysBlock = container.querySelector(`.trip-days`);
-    // структуризация событий по датам
-    const structureEvents = structureEventsByDays(events);
-    // отрисовка блока для каждого дня маршрута
-    structureEvents.forEach((day) => {
-      const tripDayComponent = new TripDayComponent(day);
-      const eventsListElement = tripDayComponent.getElement()
-        .querySelector(`.trip-events__list`);
-      // отрисовка всех точек маршрута текущего дня
-      day.events.forEach((event) => {
-        renderEvent(eventsListElement, event);
-      });
-      render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+    this._mainTripSortComponent.setSortTypeChangeHandler((sortType) => {
+      container.innerHTML = ``;
+      this._tripDaysComponent.removeElement();
+      const sortedEvents = getSortedEvents(points, sortType);
+      this._renderDays(sortedEvents);
     });
+  }
+
+  _renderEvents(eventsList, tripDayComponent) {
+    const eventsListElement = tripDayComponent.getElement()
+    .querySelector(`.trip-events__list`);
+    eventsList.forEach((event) => {
+      renderEvent(eventsListElement, event);
+    });
+  }
+
+  _renderDays(sortedEvents) {
+    render(this._container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
+    render(this._container, this._tripDaysComponent, RenderPosition.BEFOREEND);
+    const tripDaysBlock = this._container.querySelector(`.trip-days`);
+
+    const isEventsStructured = sortedEvents[0].hasOwnProperty(`day`);
+    if (isEventsStructured) {
+      sortedEvents.forEach((day) => {
+        const tripDayComponent = new TripDayComponent(day);
+        this._renderEvents(day.events, tripDayComponent);
+        render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+      });
+    } else {
+      const tripDayComponent = new TripDayComponent();
+      this._renderEvents(sortedEvents, tripDayComponent);
+      render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+    }
   }
 }
 
