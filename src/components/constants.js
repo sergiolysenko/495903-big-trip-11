@@ -1,11 +1,21 @@
 const routePoints = {
-  transfer: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`],
-  activities: [`Check-in`, `Sightseeing`, `Restaurant`],
+  transfer: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
+  activities: [`check-in`, `sightseeing`, `restaurant`],
 };
 
 const cities = [`Amsterdam`, `Moscow`, `Bruge`, `Paris`, `Boston`];
-const offersItems = [
-  {
+const offersItems = {
+  taxi: [{
+    type: `uber`,
+    title: `Order Uber`,
+    price: 20,
+  }],
+  drive: [{
+    type: `rent`,
+    title: `Rent a car`,
+    price: 200,
+  }],
+  flight: [{
     type: `luggage`,
     title: `Add luggage`,
     price: 30,
@@ -29,7 +39,19 @@ const offersItems = [
     type: `train`,
     title: `Travel by train`,
     price: 40,
-  }];
+  }],
+  sightseeing: [{
+    type: `tickets`,
+    title: `Book tickets`,
+    price: 40,
+  },
+  {
+    type: `lunch`,
+    title: `Lunch in city`,
+    price: 30,
+  }],
+};
+
 const MONTH_NAMES = [
   `JAN`,
   `FEB`,

@@ -1,6 +1,7 @@
 import {routePoints, cities, offersItems} from "./constants.js";
 import {formatTime, formatDate} from "../utils/common.js";
-import {AbstractComponent} from "./abstractComponent.js";
+import {AbstractSmartComponent} from "./abstractSmartComponent.js";
+import {citiesInfo} from "../mock/event.js";
 
 const createTransferList = (routePointsItems, event) => {
   return routePointsItems.map((item, index) => {
@@ -28,10 +29,15 @@ const createCitiesList = (citiesList) => {
   }).join(`\n`);
 };
 
-const createOffers = (offersConst, eventOffers) => {
-  return offersConst.map((offer) => {
-    const isEvent = !!eventOffers;
-    const isOfferChecked = isEvent ? eventOffers.find((item) => item.type === offer.type) : false;
+const createOffers = (currentOfferGroup, eventOffers) => {
+  if (currentOfferGroup) {
+    return `
+    <section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+        <div class="event__available-offers">
+        ${currentOfferGroup.map((offer) => {
+    const isOfferChecked = eventOffers.find((item) => item.type === offer.type);
     const isChecked = isOfferChecked ? `checked` : ``;
 
     return `<div class="event__offer-selector">
@@ -45,20 +51,45 @@ const createOffers = (offersConst, eventOffers) => {
         &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
       </label>
     </div>`;
-  }).join(`\n`);
+  }).join(`\n`)}
+        </div>
+      </section>`;
+  } else {
+    return ``;
+  }
 };
 
-const createImgMarkup = (eventPhoto) => {
-  return eventPhoto.map((photo) => {
+const createDestinationInfoMarkup = (descriptionText, photos) => {
+  const isTextAvailable = !!descriptionText;
+  const isPhotosAvailable = !!photos.length;
+
+  return `
+    <section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+          ${isTextAvailable ?
+    `<p class="event__destination-description">${descriptionText}</p>` : ``}
+          ${isPhotosAvailable ? `
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              
+    ${photos.map((photo) => {
     return `<img class="event__photo" src="${photo}" alt="Event photo">`;
-  }).join(`\n`);
+  }).join(`\n`)}
+              
+        </div>
+      </div>` : ``}
+    </section>`;
 };
 
-const createEventEditTemplate = (event) => {
-  const {eventType, city, startTime, endTime, price,
-    isFavorite, offers, description, photo, dayRoute} = event;
-
+const createEventEditTemplate = (event, options = {}) => {
+  const {startTime, endTime, price,
+    isFavorite, offers, dayRoute} = event;
+  const {eventType, cityName} = options;
   const isEvent = dayRoute;
+  const currentOfferGroup = eventType in offersItems ? offersItems[eventType] : false;
+  const cityInfo = citiesInfo.filter((city) => city.name === cityName)[0];
+  const isDestinationInfoAvailable = !!cityInfo.descriptionText || !!cityInfo.photo.length;
+  const isOptionsAndInfoAvailable = isDestinationInfoAvailable || currentOfferGroup;
 
   const wichEventType = (eventItemType) => {
     return routePoints.transfer.includes(eventItemType) ? `to` : `in`;
@@ -100,7 +131,7 @@ const createEventEditTemplate = (event) => {
         ${isEvent ? eventType : defaultEventType} ${isEvent ? wichEventType(eventType) : wichEventType(defaultEventType)}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" 
-        name="event-destination" value="${isEvent ? city : defaultCity}" 
+        name="event-destination" value="${isEvent ? cityName : defaultCity}" 
         list="destination-list-1">
         <datalist id="destination-list-1">
           ${citiesList}
@@ -151,49 +182,75 @@ const createEventEditTemplate = (event) => {
       </button>` : ``}
 
     </header>
+    ${isOptionsAndInfoAvailable ? `
     <section class="event__details">
-      <section class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      ${createOffers(currentOfferGroup, offers)}
 
-        <div class="event__available-offers">
-        ${createOffers(offersItems, offers)}
-        </div>
-      </section>
-      ${isEvent ? `` :
-      `<section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description}</p>
-
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-            ${createImgMarkup(photo)}
-
-          </div>
-        </div>
-      </section>`}
-    </section>
+      ${isDestinationInfoAvailable ?
+      createDestinationInfoMarkup(cityInfo.descriptionText, cityInfo.photo) : ``}
+    </section>` : ``}
   </form>
     </li>`);
 };
 
-export class EventItemEditComponent extends AbstractComponent {
+export class EventItemEditComponent extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+    this._eventType = event.eventType;
+    this._city = event.city;
+    this.rollUpClickHandler = null;
+    this.submitHandler = null;
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event);
+    return createEventEditTemplate(this._event, {eventType: this._eventType, cityName: this._city});
+  }
+
+  recoveryListeners() {
+    this.setRollUpClickHandler(this.rollUpClickHandler);
+    this.setSubmitHandler(this.submitHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
   }
 
   setRollUpClickHandler(handler) {
     this.getElement().querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
+    this.rollUpClickHandler = handler;
   }
 
   setSubmitHandler(handler) {
     this.getElement().querySelector(`.event--edit`)
       .addEventListener(`submit`, handler);
+    this.submitHandler = handler;
   }
+
+  setFavoritButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`click`, handler);
+  }
+  _subscribeOnEvents() {
+    const element = this.getElement();
+    element.querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `INPUT`) {
+        return;
+      }
+      evt.target.checked = true;
+      this._eventType = evt.target.value;
+      this.rerender();
+    });
+
+    const destList = element.querySelector(`.event__input--destination`);
+    destList.addEventListener(`change`, () => {
+      this._city = destList.value;
+      this.rerender();
+    });
+  }
+
 }
 
