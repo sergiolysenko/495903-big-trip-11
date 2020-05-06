@@ -4,7 +4,7 @@ import {MainTripSortComponent, SortType} from "../components/main-trip-sort.js";
 import {NoPoints} from "../components/no-points.js";
 import {TripDaysComponent} from "../components/tripdays-container.js";
 import {TripDayComponent} from "../components/tripday-container.js";
-import {PointController} from "../controllers/pointController.js";
+import {EventController} from "../controllers/pointController.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -37,7 +37,7 @@ class TripController {
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
-
+    this._onViewChange = this._onViewChange.bind(this);
     this._mainTripSortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
@@ -52,6 +52,7 @@ class TripController {
     const structureEvents = structureEventsByDays(points);
     this._renderDays(structureEvents);
   }
+
   _onDataChange(pointController, oldData, newData) {
     const index = this._points.findIndex((item) => item === oldData);
 
@@ -70,11 +71,15 @@ class TripController {
     this._renderDays(sortedEvents);
   }
 
-  _renderEvents(eventsList, tripDayComponent, onDataChange) {
+  _onViewChange() {
+    this._renderedPoints.forEach((renderedPoint) => renderedPoint.setDefaultView());
+  }
+
+  _renderEvents(eventsList, tripDayComponent, onDataChange, onViewChange) {
     const eventsListElement = tripDayComponent.getElement()
     .querySelector(`.trip-events__list`);
     return eventsList.map((event) => {
-      const pointController = new PointController(eventsListElement, onDataChange);
+      const pointController = new EventController(eventsListElement, onDataChange, onViewChange);
       pointController.render(event);
 
       return pointController;
@@ -90,13 +95,13 @@ class TripController {
     if (isEventsStructured) {
       sortedEvents.forEach((day) => {
         const tripDayComponent = new TripDayComponent(day);
-        const renderedPoints = this._renderEvents(day.events, tripDayComponent, this._onDataChange);
+        const renderedPoints = this._renderEvents(day.events, tripDayComponent, this._onDataChange, this._onViewChange);
         this._renderedPoints = this._renderedPoints.concat(renderedPoints);
         render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
       });
     } else {
       const tripDayComponent = new TripDayComponent();
-      this._renderedPoints = this._renderEvents(sortedEvents, tripDayComponent, this._onDataChange);
+      this._renderedPoints = this._renderEvents(sortedEvents, tripDayComponent, this._onDataChange, this._onViewChange);
       render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
     }
   }

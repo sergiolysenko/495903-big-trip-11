@@ -85,6 +85,7 @@ const createEventEditTemplate = (event, options = {}) => {
   const {startTime, endTime, price,
     isFavorite, offers, dayRoute} = event;
   const {eventType, cityName} = options;
+
   const isEvent = dayRoute;
   const currentOfferGroup = eventType in offersItems ? offersItems[eventType] : false;
   const cityInfo = citiesInfo.filter((city) => city.name === cityName)[0];
@@ -201,6 +202,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this._city = event.city;
     this.rollUpClickHandler = null;
     this.submitHandler = null;
+    this.favoritButtonClickHandler = null;
     this._subscribeOnEvents();
   }
 
@@ -211,11 +213,19 @@ export class EventItemEditComponent extends AbstractSmartComponent {
   recoveryListeners() {
     this.setRollUpClickHandler(this.rollUpClickHandler);
     this.setSubmitHandler(this.submitHandler);
+    this.setFavoritButtonClickHandler(this.favoritButtonClickHandler);
     this._subscribeOnEvents();
   }
 
   rerender() {
     super.rerender();
+  }
+
+  reset() {
+    const event = this._event;
+    this._eventType = event.eventType;
+    this._city = event.city;
+    this.rerender();
   }
 
   setRollUpClickHandler(handler) {
@@ -233,6 +243,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
   setFavoritButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-checkbox`)
       .addEventListener(`click`, handler);
+    this.favoritButtonClickHandler = handler;
   }
   _subscribeOnEvents() {
     const element = this.getElement();
@@ -247,6 +258,9 @@ export class EventItemEditComponent extends AbstractSmartComponent {
 
     const destList = element.querySelector(`.event__input--destination`);
     destList.addEventListener(`change`, () => {
+      if (!destList.value) {
+        destList.value = this._city;
+      }
       this._city = destList.value;
       this.rerender();
     });
