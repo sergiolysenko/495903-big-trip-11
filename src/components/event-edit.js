@@ -245,6 +245,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
       .addEventListener(`click`, handler);
     this.favoritButtonClickHandler = handler;
   }
+
   _subscribeOnEvents() {
     const element = this.getElement();
     element.querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
