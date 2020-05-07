@@ -3,7 +3,10 @@ import {randomNumder} from "../utils/common.js";
 
 const generatePhotoList = () => {
   return new Array(randomNumder(1, 5)).fill(``).map(()=> {
-    return `http://picsum.photos/248/152?r=${Math.random()}`;
+    return {
+      src: `http://picsum.photos/248/152?r=${Math.random()}`,
+      description: `Chamonix parliament building`,
+    };
   });
 };
 
@@ -21,16 +24,16 @@ const generateCitiesInfo = () => {
   const descriptionArr = text.split(`. `);
   return cities.map((cityName) => {
     return {
+      description: descriptionArr.slice(0, randomNumder(1, descriptionArr.length - 1)).join(` `),
       name: cityName,
-      descriptionText: descriptionArr.slice(0, randomNumder(1, descriptionArr.length - 1)).join(` `),
-      photo: generatePhotoList(),
+      pictures: generatePhotoList(),
     };
   });
 };
 const citiesInfo = generateCitiesInfo();
 const generateNextDate = (date) => {
   const nextDate = new Date(date);
-  nextDate.setDate(nextDate.getDate() + randomNumder(0, 0));
+  nextDate.setDate(nextDate.getDate() + randomNumder(0, 1));
   nextDate.setHours(nextDate.getHours() + randomNumder(0, 12));
   nextDate.setMinutes(nextDate.getMinutes() + randomNumder(0, 60));
   return nextDate;

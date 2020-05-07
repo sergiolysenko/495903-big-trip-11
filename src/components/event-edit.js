@@ -1,5 +1,5 @@
 import {routePoints, cities, offersItems} from "./constants.js";
-import {formatTime, formatDate} from "../utils/common.js";
+import {formatDate} from "../utils/common.js";
 import {AbstractSmartComponent} from "./abstractSmartComponent.js";
 import {citiesInfo} from "../mock/event.js";
 import flatpickr from "flatpickr";
@@ -75,7 +75,7 @@ const createDestinationInfoMarkup = (descriptionText, photos) => {
             <div class="event__photos-tape">
               
     ${photos.map((photo) => {
-    return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+    return `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`;
   }).join(`\n`)}
               
         </div>
@@ -91,7 +91,7 @@ const createEventEditTemplate = (event, options = {}) => {
   const isEvent = dayRoute;
   const currentOfferGroup = eventType in offersItems ? offersItems[eventType] : false;
   const cityInfo = citiesInfo.filter((city) => city.name === cityName)[0];
-  const isDestinationInfoAvailable = !!cityInfo.descriptionText || !!cityInfo.photo.length;
+  const isDestinationInfoAvailable = !!cityInfo.description || !!cityInfo.pictures.length;
   const isOptionsAndInfoAvailable = isDestinationInfoAvailable || currentOfferGroup;
 
   const wichEventType = (eventItemType) => {
@@ -148,7 +148,7 @@ const createEventEditTemplate = (event, options = {}) => {
         <input class="event__input  event__input--time" 
           id="event-start-time-1" 
           type="text" name="event-start-time" 
-          value="${isEvent ? `${formatDate(startTime)} ${formatTime(startTime)}` : `18/03/19 00:00`}">
+          value="${formatDate(startTime)}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">
           To
@@ -156,7 +156,7 @@ const createEventEditTemplate = (event, options = {}) => {
         <input class="event__input  event__input--time" 
           id="event-end-time-1" type="text" 
           name="event-end-time" 
-          value="${isEvent ? `${formatDate(endTime)} ${formatTime(endTime)}` : `18/03/19 00:00`}">
+          value="${formatDate(endTime)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -190,7 +190,7 @@ const createEventEditTemplate = (event, options = {}) => {
       ${createOffers(currentOfferGroup, offers)}
 
       ${isDestinationInfoAvailable ?
-      createDestinationInfoMarkup(cityInfo.descriptionText, cityInfo.photo) : ``}
+      createDestinationInfoMarkup(cityInfo.description, cityInfo.pictures) : ``}
     </section>` : ``}
   </form>
     </li>`);
