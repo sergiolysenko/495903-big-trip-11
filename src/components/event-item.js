@@ -3,6 +3,7 @@ import {formatTime, routePointDuration} from "../utils/common.js";
 import {AbstractComponent} from "./abstractComponent.js";
 
 const generateOffers = (offers) => {
+
   const MAX_OFFERS = 2;
   return offers.map((offer, index) => {
     return (`<li class="event__offer ${index > MAX_OFFERS ? `visually-hidden` : ``}">
@@ -15,7 +16,7 @@ const generateOffers = (offers) => {
 
 const createEventItemTemplate = (event) => {
   const {eventType, city, startTime, endTime, price, offers} = event;
-  const isOfferShowing = !!offers;
+  const isOfferShowing = !offers.lenght;
   const wichEventType = routePoints.transfer.includes(eventType) ? `transfer` : `activities`;
 
   return (`<li class="trip-events__item">
