@@ -2,6 +2,8 @@ import {routePoints, cities, offersItems} from "./constants.js";
 import {formatTime, formatDate} from "../utils/common.js";
 import {AbstractSmartComponent} from "./abstractSmartComponent.js";
 import {citiesInfo} from "../mock/event.js";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 const createTransferList = (routePointsItems, event) => {
   return routePointsItems.map((item, index) => {
@@ -204,6 +206,9 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this.submitHandler = null;
     this.favoritButtonClickHandler = null;
     this._subscribeOnEvents();
+    this._flatpickrStart = null;
+    this._flatpickrEnd = null;
+    this._applyFlatpickr();
   }
 
   getTemplate() {
@@ -219,6 +224,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -244,6 +250,37 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__favorite-checkbox`)
       .addEventListener(`click`, handler);
     this.favoritButtonClickHandler = handler;
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickrStart.destroy();
+      this._flatpickrEnd.destroy();
+      this._flatpickrStart = null;
+      this._flatpickrEnd = null;
+    }
+
+    const startDate = this.getElement().querySelector(`.event__input--time`);
+    this._flatpickrStart = flatpickr(startDate, {
+      enableTime: true,
+      altFormat: `d/m/y H:i`,
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._event.startTime || `today`,
+      onClose: (selectedDates, dateStr) => {
+        this._flatpickrEnd.set(`minDate`, dateStr);
+      },
+    });
+
+    const endTime = this.getElement().querySelector(`#event-end-time-1`);
+    this._flatpickrEnd = flatpickr(endTime, {
+      enableTime: true,
+      minDate: startDate.value,
+      altFormat: `d/m/y H:i`,
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._event.endTime || `today`,
+    });
   }
 
   _subscribeOnEvents() {
