@@ -1,40 +1,26 @@
 import {MONTH_NAMES} from "../components/constants.js";
+import moment from "moment";
 
 const randomNumder = (min, max) => {
   return Math.round(min - 0.5 + Math.random() * (max - min + 1));
 };
 
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
-};
-
 const formatTime = (date) => {
-  const hours = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
-
-  return `${hours}:${minutes}`;
+  return moment(date).format(`HH:mm`);
 };
 
 const formatDate = (date) => {
-  const day = castTimeFormat(date.getDate());
-  const month = castTimeFormat(date.getMonth());
-  const year = date.getFullYear().toString().substring(2);
-  return `${day}/${month}/${year}`;
+  return moment(date).format(`dd/mm/yy`);
 };
 
 const formatMonth = (month) => `${MONTH_NAMES[month]}`;
 
 const routePointDuration = (start, end) => {
-  const duarionMinutes = end.getMinutes() - start.getMinutes();
-  const isMinNegative = duarionMinutes < 0;
-  const minutes = isMinNegative ? 60 + duarionMinutes : duarionMinutes;
-  const durationHour = isMinNegative ? end.getHours() - start.getHours() - 1 : end.getHours() - start.getHours();
-  const isHourNegative = durationHour < 0;
-  const hours = isHourNegative ? 24 + durationHour : durationHour;
-  const durationDay = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 3600 * 24)) - 1;
-  const isPartShoing = (time, letter) => time === 0 ? `` : time + letter;
-  const date = `${isPartShoing(durationDay, `D`)} ${isPartShoing(hours, `H`)} ${isPartShoing(minutes, `M`)}`;
-  return date;
+  const difference = moment.utc(moment(end).diff(moment(start)));
+  const diffInHoursAndSec = moment(difference).format(`H[H] mm[M]`);
+  const diffInDays = Math.floor(moment.duration(difference).asDays());
+  const isDayDiff = diffInDays >= 1 ? diffInDays + `D` : ``;
+  return isDayDiff + ` ` + diffInHoursAndSec;
 };
 
 const structureEventsByDays = (eventsList) => {
