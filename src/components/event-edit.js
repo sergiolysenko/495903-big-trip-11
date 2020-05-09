@@ -32,19 +32,19 @@ const createCitiesList = (citiesList) => {
 };
 
 const createOffers = (currentOfferGroup, eventOffers) => {
-  if (currentOfferGroup) {
+  if (currentOfferGroup.length) {
     return `
     <section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
         <div class="event__available-offers">
-        ${currentOfferGroup.map((offer) => {
+        ${currentOfferGroup[0].offers.map((offer) => {
     const isOfferChecked = eventOffers.find((item) => item.type === offer.type);
     const isChecked = isOfferChecked ? `checked` : ``;
 
     return `<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" 
-      id="event-offer-${offer.type}-1" type="checkbox" 
+      id="event-offer--1" type="checkbox" 
       name="event-offer-${offer.type}"  
       ${isChecked}>
       <label class="event__offer-label" for="event-offer-${offer.type}-1">
@@ -89,10 +89,11 @@ const createEventEditTemplate = (event, options = {}) => {
   const {eventType, cityName} = options;
 
   const isEvent = dayRoute;
-  const currentOfferGroup = eventType in offersItems ? offersItems[eventType] : false;
+
+  const currentOfferGroup = offersItems.filter((offersGroup) => offersGroup.type === eventType);
   const cityInfo = citiesInfo.filter((city) => city.name === cityName)[0];
   const isDestinationInfoAvailable = !!cityInfo.description || !!cityInfo.pictures.length;
-  const isOptionsAndInfoAvailable = isDestinationInfoAvailable || currentOfferGroup;
+  const isOptionsAndInfoAvailable = isDestinationInfoAvailable || !!currentOfferGroup.length;
 
   const wichEventType = (eventItemType) => {
     return routePoints.transfer.includes(eventItemType) ? `to` : `in`;
@@ -296,7 +297,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
 
     const destList = element.querySelector(`.event__input--destination`);
     destList.addEventListener(`change`, () => {
-      if (!destList.value) {
+      if (!destList.value || !cities.includes(destList.value)) {
         destList.value = this._city;
       }
       this._city = destList.value;
