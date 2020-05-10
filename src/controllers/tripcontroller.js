@@ -47,7 +47,13 @@ class TripController {
 
   renderTrip() {
     const events = this._eventsModel.getEvents();
-
+    const isNoEvents = !events.length;
+    if (isNoEvents) {
+      render(this._container, this._noPointsComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+    render(this._container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
+    render(this._container, this._tripDaysComponent, RenderPosition.BEFOREEND);
     this._renderDays(events, this._currentTypeSort);
   }
 
@@ -60,8 +66,8 @@ class TripController {
   }
 
   _onSortTypeChange(sortType) {
-    this._container.innerHTML = ``;
-    this._tripDaysComponent.removeElement();
+    this._removeEvents();
+    this._tripDaysComponent.getElement().innerHTML = ``;
     this._currentTypeSort = sortType;
     const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
     this._renderDays(sortedEvents, sortType);
@@ -74,16 +80,17 @@ class TripController {
   _removeEvents() {
     this._renderedEventsControllers.forEach((renderedEvent) => renderedEvent.destroy());
     this._renderedEventsControllers = [];
-    this._container.innerHTML = ``;
-    this._tripDaysComponent.removeElement();
+    this._tripDaysComponent.getElement().innerHTML = ``;
   }
 
   _updateEvents() {
     this._removeEvents();
-    this._renderDays(this._eventsModel.getEvents(), this._currentTypeSort);
+    this._renderDays(this._eventsModel.getEvents(), SortType.EVENT);
   }
 
   _onFilterChange() {
+    this._mainTripSortComponent.setDefaultSortType();
+    this._mainTripSortComponent.rerender();
     this._updateEvents();
   }
 
@@ -99,14 +106,6 @@ class TripController {
   }
 
   _renderDays(events, sortType) {
-    const container = this._container;
-    const isNoEvents = !events.length;
-    if (isNoEvents) {
-      render(container, this._noPointsComponent, RenderPosition.BEFOREEND);
-      return;
-    }
-    render(this._container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
-    render(this._container, this._tripDaysComponent, RenderPosition.BEFOREEND);
     const tripDaysBlock = this._container.querySelector(`.trip-days`);
     this._renderedEventsControllers = [];
     const isSortTypeEvent = sortType === SortType.EVENT;

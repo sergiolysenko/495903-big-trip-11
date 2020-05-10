@@ -66,9 +66,14 @@ class MainTripSortComponent extends AbstractSmartComponent {
     return this._currenSortType;
   }
 
-  setSortTypeChangeHandler(handler) {
-    this.getElement().addEventListener(`click`, (evt) => {
+  setDefaultSortType() {
+    this._currentTypeSort = SortType.EVENT;
+  }
 
+  setSortTypeChangeHandler(handler) {
+    this.sortTypeChangeHandler = handler;
+
+    this.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `LABEL`) {
         return;
       }
@@ -77,7 +82,6 @@ class MainTripSortComponent extends AbstractSmartComponent {
       if (this._currentTypeSort === sortType) {
         return;
       }
-      this.sortTypeChangeHandler = handler;
       this._currentTypeSort = sortType;
       handler(this._currentTypeSort);
       this.rerender();
