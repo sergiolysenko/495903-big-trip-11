@@ -59,5 +59,14 @@ const structureEventsByDays = (eventsList) => {
   return arrForDays;
 };
 
+const isFutureEvent = (startDate, dateNow) => {
+  return startDate > dateNow;
+};
+
+const isPastEvent = (endDate, dateNow) => {
+  return endDate < dateNow;
+};
+
 export {randomNumder, formatTime, formatDate,
-  routePointDuration, structureEventsByDays, formatMonth};
+  routePointDuration, structureEventsByDays,
+  formatMonth, isFutureEvent, isPastEvent};

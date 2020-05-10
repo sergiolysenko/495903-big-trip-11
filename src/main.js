@@ -1,14 +1,16 @@
 import {MainInfoComponent} from "./components/main-info.js";
 import {InfoCostComponent} from "./components/info-cost.js";
 import {MainNavComponent} from "./components/main-nav.js";
-import {MainFilterComponent} from "./components/main-filter.js";
 import {generateEvents} from "./mock/event.js";
 import {RenderPosition, render} from "./utils/render.js";
 import {TripController} from "./controllers/tripcontroller.js";
+import {EventsModel} from "./models/eventsModel";
+import {FilterController} from "./controllers/filterController.js";
 
 const EVENTS_COUNT = 16;
 const allEvents = generateEvents(EVENTS_COUNT);
-const eventsSorted = allEvents.slice().sort((a, b) => a.startTime - b.startTime);
+const eventsModel = new EventsModel();
+eventsModel.setEvents(allEvents);
 
 // Рендер блока инфо в шапке Маршрут и даты
 const headerTripMainBlock = document.querySelector(`.trip-main`);
@@ -24,8 +26,9 @@ const placeForInsertNav = headerTripControlsBlock.querySelector(`h2:last-child`)
 render(placeForInsertNav, new MainNavComponent(), RenderPosition.INSERTBEFORE, placeForInsertNav);
 
 // Рендер блока в шапке фильтры
-render(headerTripControlsBlock, new MainFilterComponent(), RenderPosition.BEFOREEND);
+const filterController = new FilterController(headerTripControlsBlock, eventsModel);
+filterController.render();
 
 const tripEventsBlock = document.querySelector(`.trip-events`);
-const tripController = new TripController(tripEventsBlock);
-tripController.renderTrip(eventsSorted);
+const tripController = new TripController(tripEventsBlock, eventsModel);
+tripController.renderTrip();

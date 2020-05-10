@@ -34,4 +34,9 @@ const render = (container, component, place) => {
   }
 };
 
-export {createElement, RenderPosition, render, replace};
+const remove = (component) => {
+  component.getElement().remove();
+  component.removeElement();
+};
+
+export {createElement, RenderPosition, render, replace, remove};

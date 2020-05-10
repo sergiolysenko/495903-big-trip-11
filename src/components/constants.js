@@ -79,5 +79,10 @@ const MONTH_NAMES = [
   `DEC`,
 ];
 
+const FiltersType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`,
+};
 
-export {routePoints, cities, offersItems, MONTH_NAMES};
+export {routePoints, cities, offersItems, MONTH_NAMES, FiltersType};

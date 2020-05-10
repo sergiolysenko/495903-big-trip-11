@@ -51,6 +51,7 @@ const generateEvent = () => {
   const currentOfferGroup = offersItems.filter((offersGroup) => offersGroup.type === randomEventType);
 
   return {
+    id: String(new Date() + Math.random()),
     eventType: randomEventType,
     city: cityInfo.name,
     startTime: startDay,
