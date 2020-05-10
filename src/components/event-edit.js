@@ -210,6 +210,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
     this._applyFlatpickr();
+    this._deleteButtonClickHandler = null;
   }
 
   getTemplate() {
@@ -220,7 +221,19 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this.setRollUpClickHandler(this.rollUpClickHandler);
     this.setSubmitHandler(this.submitHandler);
     this.setFavoritButtonClickHandler(this.favoritButtonClickHandler);
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this._subscribeOnEvents();
+  }
+
+  removeElement() {
+    if (this._flatpickrStart) {
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
+    } else if (this._flatpickrEnd) {
+      this._flatpickrEnd.destroy();
+      this._flatpickrEnd = null;
+    }
+    super.removeElement();
   }
 
   rerender() {
@@ -251,6 +264,13 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__favorite-checkbox`)
       .addEventListener(`click`, handler);
     this.favoritButtonClickHandler = handler;
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
+
+    this._deleteButtonClickHandler = handler;
   }
 
   _applyFlatpickr() {

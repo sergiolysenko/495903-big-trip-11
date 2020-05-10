@@ -7,6 +7,8 @@ const Mode = {
   EDIT: `edit`,
 };
 
+const emptyEvent = {};
+
 class EventController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
@@ -18,7 +20,8 @@ class EventController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(event) {
+  render(event, mode) {
+    this._mode = mode;
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
 
@@ -39,14 +42,21 @@ class EventController {
     this._eventEditComponent.setRollUpClickHandler(() => {
       this._closeEdit();
     });
+
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      this._closeEdit();
+      const data = this._eventEditComponent.getData();
+      this._onDataChange(this, event, data);
+    });
+
+    this._eventEditComponent.setDeleteButtonClickHandler(() => {
+      this._onDataChange(this, event, null);
     });
 
     if (oldEventComponent && oldEventEditComponent) {
       replace(this._eventComponent, oldEventComponent);
       replace(this._eventEditComponent, oldEventEditComponent);
+      this._closeEdit();
     } else {
       render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
     }
@@ -89,4 +99,4 @@ class EventController {
     }
   }
 }
-export {EventController};
+export {EventController, Mode, emptyEvent};

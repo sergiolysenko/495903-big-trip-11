@@ -4,7 +4,7 @@ import {MainTripSortComponent, SortType} from "../components/main-trip-sort.js";
 import {NoPoints} from "../components/no-points.js";
 import {TripDaysComponent} from "../components/tripdays-container.js";
 import {TripDayComponent} from "../components/tripday-container.js";
-import {EventController} from "./eventController.js";
+import {EventController, Mode as EventControllerMode, emptyEvent} from "./eventController.js";
 
 
 const getSortedEvents = (events, sortType) => {
@@ -58,10 +58,26 @@ class TripController {
   }
 
   _onDataChange(eventController, oldData, newData) {
-    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+    if (oldData === emptyEvent) {
+      this._creatingEvent = null;
+      if (newData === null) {
+        eventController.destroy();
+        this._updateEvents();
+      } else {
+        this._eventModel.addEvent(newData);
+        eventController.render(newData, EventControllerMode.DEFAULT);
 
-    if (isSuccess) {
-      eventController.render(newData);
+        this.this._renderedEventsControllers = [].concat(eventController);
+      }
+    } else if (newData === null) {
+      this._eventsModel.removeEvent(oldData.id);
+      this._updateEvents();
+    } else {
+      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+
+      if (isSuccess) {
+        eventController.render(newData, EventControllerMode.DEFAULT);
+      }
     }
   }
 
@@ -98,10 +114,10 @@ class TripController {
     const eventsListElement = tripDayComponent.getElement()
     .querySelector(`.trip-events__list`);
     return eventsList.map((event) => {
-      const pointController = new EventController(eventsListElement, onDataChange, onViewChange);
-      pointController.render(event);
+      const eventController = new EventController(eventsListElement, onDataChange, onViewChange);
+      eventController.render(event, EventControllerMode.DEFAULT);
 
-      return pointController;
+      return eventController;
     });
   }
 
