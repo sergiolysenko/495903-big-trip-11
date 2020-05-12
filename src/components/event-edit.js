@@ -123,10 +123,11 @@ const createDestinationInfoMarkup = (descriptionText, photos) => {
 };
 
 const createEventEditTemplate = (event, options = {}) => {
-  const {startTime, endTime, price,
-    isFavorite, offers, id} = event;
-  const {eventType, cityName} = options;
-  const isNewEvent = !id;
+  const {startTime, endTime,
+    isFavorite, offers, newEmptyEvent = false} = event;
+  const {eventType, cityName, price} = options;
+  const isNewEvent = newEmptyEvent;
+  const isReadyToSave = !!price && !!cityName;
   const currentOfferGroup = offersItems.filter((offersGroup) => offersGroup.type === eventType);
   const cityInfo = citiesInfo.filter((city) => city.name === cityName)[0];
   const isCityFieldEmpty = !cityName;
@@ -202,11 +203,11 @@ const createEventEditTemplate = (event, options = {}) => {
           &euro;
         </label>
         <input class="event__input  event__input--price" 
-        id="event-price-1" type="text" 
+        id="event-price-1" type="number" 
         name="event-price" value="${price}">
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${isReadyToSave ? `` : `disabled`}>Save</button>
       <button class="event__reset-btn" type="reset">${isNewEvent ? `Cancel` : `Delete`}</button>
       ${isNewEvent ? `` :
       `<input id="event-favorite-1" class="event__favorite-checkbox  
@@ -239,6 +240,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this._event = event;
     this._eventType = event.eventType;
     this._city = event.city;
+    this._price = event.price;
     this.rollUpClickHandler = null;
     this.submitHandler = null;
     this.favoritButtonClickHandler = null;
@@ -250,7 +252,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, {eventType: this._eventType, cityName: this._city});
+    return createEventEditTemplate(this._event, {eventType: this._eventType, cityName: this._city, price: this._price});
   }
 
   recoveryListeners() {
@@ -281,6 +283,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     const event = this._event;
     this._eventType = event.eventType;
     this._city = event.city;
+    this._price = event.price;
     this.rerender();
   }
 
@@ -367,6 +370,11 @@ export class EventItemEditComponent extends AbstractSmartComponent {
         destList.value = this._city;
       }
       this._city = destList.value;
+      this.rerender();
+    });
+    const priceInput = element.querySelector(`.event__input--price`);
+    priceInput.addEventListener(`change`, () => {
+      this._price = priceInput.value;
       this.rerender();
     });
   }

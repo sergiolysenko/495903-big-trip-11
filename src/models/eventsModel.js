@@ -46,7 +46,7 @@ class EventsModel {
     }
 
     this._events = [].concat(this._events.slice(0, index), this._events.slice(index + 1));
-    // this._callHandlers(this._dataChangeHandlers);
+    this._callHandlers(this._dataChangeHandlers);
 
     return true;
   }

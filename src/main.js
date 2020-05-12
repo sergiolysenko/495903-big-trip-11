@@ -1,6 +1,5 @@
 import {MainInfoComponent} from "./components/main-info.js";
 import {MainNavComponent, MenuItem} from "./components/main-nav.js";
-import {NewEventButtonComponent} from "./components/newEventButtonComponent.js";
 import {generateEvents} from "./mock/event.js";
 import {RenderPosition, render} from "./utils/render.js";
 import {TripController} from "./controllers/tripcontroller.js";
@@ -29,17 +28,13 @@ filterController.render();
 const tripEventsBlock = document.querySelector(`.trip-events`);
 const tripController = new TripController(tripEventsBlock, eventsModel);
 tripController.renderTrip();
-const newEventButtonComponent = new NewEventButtonComponent();
-newEventButtonComponent.setOnClick(() => {
-  tripController.createEvent();
-  newEventButtonComponent.toggleDisabledNewEvent();
-});
 
 
 mainNavComponent.setOnClick((menuItem) => {
   switch (menuItem) {
     case MenuItem.NEW_EVENT:
       document.querySelector(`.trip-main__event-add-btn`).disabled = true;
+
       tripController.createEvent();
       break;
   }

@@ -13,7 +13,7 @@ export class NewEventButtonComponent {
 
   setOnClick(handler) {
     this._newEventButton.addEventListener(`click`, () => {
-      handler(this._newEventButton);
+      handler();
     });
   }
 }

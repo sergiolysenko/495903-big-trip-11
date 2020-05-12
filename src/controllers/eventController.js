@@ -16,6 +16,7 @@ const emptyEvent = {
   price: ``,
   isFavorite: false,
   offers: [],
+  newEmptyEvent: true,
 };
 
 class EventController {
