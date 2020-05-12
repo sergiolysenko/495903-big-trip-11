@@ -36,6 +36,7 @@ class TripController {
     this._mainTripSortComponent = new MainTripSortComponent();
     this._tripDaysComponent = new TripDaysComponent();
     this._tripDayComponent = new TripDayComponent();
+    this._creatingEvent = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -64,10 +65,10 @@ class TripController {
         eventController.destroy();
         this._updateEvents();
       } else {
-        this._eventModel.addEvent(newData);
+        this._eventsModel.addEvent(newData);
         eventController.render(newData, EventControllerMode.DEFAULT);
 
-        this.this._renderedEventsControllers = [].concat(eventController);
+        this._renderedEventsControllers = [].concat(eventController);
       }
     } else if (newData === null) {
       this._eventsModel.removeEvent(oldData.id);
@@ -91,6 +92,15 @@ class TripController {
 
   _onViewChange() {
     this._renderedEventsControllers.forEach((renderedEvent) => renderedEvent.setDefaultView());
+  }
+  createEvent() {
+    if (this._creatingEvent) {
+      return;
+    }
+
+    const eventsListElement = document.querySelector(`.trip-events__list`);
+    this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
+    this._creatingEvent.render(emptyEvent, EventControllerMode.NEW_EVENT);
   }
 
   _removeEvents() {

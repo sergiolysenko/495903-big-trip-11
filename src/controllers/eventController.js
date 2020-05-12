@@ -3,11 +3,20 @@ import {EventItemComponent} from "../components/event-item.js";
 import {EventItemEditComponent} from "../components/event-edit.js";
 
 const Mode = {
+  NEW_EVENT: `new`,
   DEFAULT: `default`,
   EDIT: `edit`,
 };
 
-const emptyEvent = {};
+const emptyEvent = {
+  eventType: `bus`,
+  city: ``,
+  startTime: new Date(),
+  endTime: new Date(),
+  price: ``,
+  isFavorite: false,
+  offers: [],
+};
 
 class EventController {
   constructor(container, onDataChange, onViewChange) {
@@ -53,12 +62,24 @@ class EventController {
       this._onDataChange(this, event, null);
     });
 
-    if (oldEventComponent && oldEventEditComponent) {
-      replace(this._eventComponent, oldEventComponent);
-      replace(this._eventEditComponent, oldEventEditComponent);
-      this._closeEdit();
-    } else {
-      render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+    switch (mode) {
+      case Mode.DEFAULT:
+        if (oldEventComponent && oldEventEditComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+          this._closeEdit();
+        } else {
+          render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+        }
+        break;
+      case Mode.NEW_EVENT:
+        if (oldEventComponent && oldEventEditComponent) {
+          remove(oldEventComponent);
+          remove(oldEventEditComponent);
+        }
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+        break;
     }
   }
 
@@ -95,6 +116,9 @@ class EventController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
+      if (this._mode === Mode.NEW_EVENT) {
+        this._onDataChange(this, emptyEvent, null);
+      }
       this._closeEdit();
     }
   }

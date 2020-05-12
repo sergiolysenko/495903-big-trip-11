@@ -59,7 +59,6 @@ const generateEvent = () => {
     price: randomNumder(10, 1500),
     isFavorite: Math.random() < 0.5,
     offers: !currentOfferGroup.length ? [] : currentOfferGroup[0].offers.slice(0, randomNumder(0, currentOfferGroup.length)),
-    dayRoute: true,
   };
 };
 

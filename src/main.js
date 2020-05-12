@@ -1,6 +1,6 @@
 import {MainInfoComponent} from "./components/main-info.js";
-import {InfoCostComponent} from "./components/info-cost.js";
-import {MainNavComponent} from "./components/main-nav.js";
+import {MainNavComponent, MenuItem} from "./components/main-nav.js";
+import {NewEventButtonComponent} from "./components/newEventButtonComponent.js";
 import {generateEvents} from "./mock/event.js";
 import {RenderPosition, render} from "./utils/render.js";
 import {TripController} from "./controllers/tripcontroller.js";
@@ -16,14 +16,11 @@ eventsModel.setEvents(allEvents);
 const headerTripMainBlock = document.querySelector(`.trip-main`);
 render(headerTripMainBlock, new MainInfoComponent(), RenderPosition.AFTERBEGIN);
 
-// Рендер блока инфо в шапке общая стоимость поездки
-const tripInfoBlock = headerTripMainBlock.querySelector(`.trip-info`);
-render(tripInfoBlock, new InfoCostComponent(), RenderPosition.BEFOREEND);
-
 // Рендер блока в шапке навигация
 const headerTripControlsBlock = headerTripMainBlock.querySelector(`.trip-controls`);
 const placeForInsertNav = headerTripControlsBlock.querySelector(`h2:last-child`);
-render(placeForInsertNav, new MainNavComponent(), RenderPosition.INSERTBEFORE, placeForInsertNav);
+const mainNavComponent = new MainNavComponent();
+render(placeForInsertNav, mainNavComponent, RenderPosition.INSERTBEFORE, placeForInsertNav);
 
 // Рендер блока в шапке фильтры
 const filterController = new FilterController(headerTripControlsBlock, eventsModel);
@@ -32,3 +29,18 @@ filterController.render();
 const tripEventsBlock = document.querySelector(`.trip-events`);
 const tripController = new TripController(tripEventsBlock, eventsModel);
 tripController.renderTrip();
+const newEventButtonComponent = new NewEventButtonComponent();
+newEventButtonComponent.setOnClick(() => {
+  tripController.createEvent();
+  newEventButtonComponent.toggleDisabledNewEvent();
+});
+
+
+mainNavComponent.setOnClick((menuItem) => {
+  switch (menuItem) {
+    case MenuItem.NEW_EVENT:
+      document.querySelector(`.trip-main__event-add-btn`).disabled = true;
+      tripController.createEvent();
+      break;
+  }
+});
