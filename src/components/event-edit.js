@@ -123,17 +123,15 @@ const createDestinationInfoMarkup = (descriptionText, photos) => {
 };
 
 const createEventEditTemplate = (event, options = {}) => {
-  const {startTime, endTime,
-    isFavorite, offers, newEmptyEvent = false} = event;
-  const {eventType, cityName, price} = options;
+  const {isFavorite, offers, newEmptyEvent = false} = event;
+  const {eventType, cityName, price, startTime, endTime} = options;
   const isNewEvent = newEmptyEvent;
-  const isReadyToSave = !!price && !!cityName;
+  const isReadyToSave = !!price && !!cityName && !!startTime && !!endTime;
   const currentOfferGroup = offersItems.filter((offersGroup) => offersGroup.type === eventType);
   const cityInfo = citiesInfo.filter((city) => city.name === cityName)[0];
   const isCityFieldEmpty = !cityName;
   const isDestinationInfoAvailable = isCityFieldEmpty ? false : !!cityInfo.description || !!cityInfo.pictures.length;
   const isOptionsAndInfoAvailable = isDestinationInfoAvailable || !!currentOfferGroup.length;
-
   const wichEventType = (eventItemType) => {
     return routePoints.transfer.includes(eventItemType) ? `to` : `in`;
   };
@@ -241,6 +239,8 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this._eventType = event.eventType;
     this._city = event.city;
     this._price = event.price;
+    this._startTime = event.startTime;
+    this._endTime = event.endTime;
     this.rollUpClickHandler = null;
     this.submitHandler = null;
     this.favoritButtonClickHandler = null;
@@ -252,7 +252,9 @@ export class EventItemEditComponent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, {eventType: this._eventType, cityName: this._city, price: this._price});
+    return createEventEditTemplate(this._event,
+        {eventType: this._eventType, cityName: this._city,
+          price: this._price, startTime: this._startTime, endTime: this._endTime});
   }
 
   recoveryListeners() {
@@ -267,7 +269,8 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     if (this._flatpickrStart) {
       this._flatpickrStart.destroy();
       this._flatpickrStart = null;
-    } else if (this._flatpickrEnd) {
+    }
+    if (this._flatpickrEnd) {
       this._flatpickrEnd.destroy();
       this._flatpickrEnd = null;
     }
@@ -284,6 +287,8 @@ export class EventItemEditComponent extends AbstractSmartComponent {
     this._eventType = event.eventType;
     this._city = event.city;
     this._price = event.price;
+    this._startTime = event.startTime;
+    this._endTime = event.endTime;
     this.rerender();
   }
 
@@ -323,22 +328,26 @@ export class EventItemEditComponent extends AbstractSmartComponent {
   }
 
   _applyFlatpickr() {
-    if (this._flatpickr) {
-      this._flatpickrStart.destroy();
+    if (this._flatpickrEnd) {
       this._flatpickrEnd.destroy();
-      this._flatpickrStart = null;
       this._flatpickrEnd = null;
     }
+    if (this._flatpickrStart) {
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
+    }
 
-    const startDate = this.getElement().querySelector(`.event__input--time`);
+    const startDate = this.getElement().querySelector(`#event-start-time-1`);
     this._flatpickrStart = flatpickr(startDate, {
       enableTime: true,
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
-      defaultDate: this._event.startTime || `today`,
+      defaultDate: this._startTime || `today`,
       onClose: (selectedDates, dateStr) => {
+        this._startTime = dateStr;
         this._flatpickrEnd.set(`minDate`, dateStr);
+        this._flatpickrEnd.open();
       },
     });
 
@@ -349,7 +358,10 @@ export class EventItemEditComponent extends AbstractSmartComponent {
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
-      defaultDate: this._event.endTime || `today`,
+      defaultDate: this._endTime || `today`,
+      onClose: (selectedDates, dateStr) => {
+        this._endTime = dateStr;
+      },
     });
   }
 
