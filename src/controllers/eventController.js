@@ -41,7 +41,7 @@ class EventController {
     this._eventEditComponent.setFavoritButtonClickHandler(() => {
       this._onDataChange(this, event, Object.assign({}, event, {
         isFavorite: !event.isFavorite,
-      }));
+      }), true);
     });
 
     this._eventComponent.setEditButtonClickHandler(() => {
@@ -81,6 +81,11 @@ class EventController {
         document.addEventListener(`keydown`, this._onEscKeyDown);
         render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
         break;
+      case Mode.EDIT:
+        if (oldEventComponent && oldEventEditComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+        }
     }
   }
 

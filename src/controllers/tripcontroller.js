@@ -61,7 +61,7 @@ class TripController {
     this._renderDays(events, this._currentTypeSort);
   }
 
-  _onDataChange(eventController, oldData, newData) {
+  _onDataChange(eventController, oldData, newData, dontClose = false) {
     if (oldData === emptyEvent) {
       this._creatingEvent = null;
       if (newData === null) {
@@ -79,8 +79,9 @@ class TripController {
       this._updateEvents();
     } else {
       const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
-
-      if (isSuccess) {
+      if (isSuccess && dontClose) {
+        eventController.render(newData, EventControllerMode.EDIT);
+      } else if (isSuccess) {
         eventController.render(newData, EventControllerMode.DEFAULT);
       }
     }

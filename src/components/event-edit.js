@@ -1,5 +1,5 @@
 import {routePoints, cities, offersItems} from "./constants.js";
-import {formatDate} from "../utils/common.js";
+import {formatDate, getRoutePointWithUpperFirstLetter} from "../utils/common.js";
 import {AbstractSmartComponent} from "./abstractSmartComponent.js";
 import {citiesInfo} from "../mock/event.js";
 import flatpickr from "flatpickr";
@@ -45,20 +45,20 @@ const parseFormData = (formData) => {
 };
 
 const createTransferList = (routePointsItems, event) => {
-  return routePointsItems.map((item, index) => {
-    const lowerCaseItem = item.toLowerCase();
-    const isChecked = item === event ? `checked` : ``;
+  return routePointsItems.map((routePoint, index) => {
+    const routePointWithUpperFirstLetter = getRoutePointWithUpperFirstLetter(routePoint);
+    const isChecked = routePoint === event ? `checked` : ``;
     return (`<div class="event__type-item">
       <input 
-        id="event-type-${lowerCaseItem}-${index}" 
+        id="event-type-${routePoint}-${index}" 
         class="event__type-input  visually-hidden" 
         type="radio" name="event-type" 
-        value="${lowerCaseItem}" ${isChecked}>
+        value="${routePoint}" ${isChecked}>
       <label 
         class="event__type-label  
-        event__type-label--${lowerCaseItem}" 
-        for="event-type-${lowerCaseItem}-${index}">
-          ${item}
+        event__type-label--${routePoint}" 
+        for="event-type-${routePoint}-${index}">
+          ${routePointWithUpperFirstLetter}
         </label>
     </div>`);
   }).join(`\n`);
@@ -167,7 +167,7 @@ const createEventEditTemplate = (event, options = {}) => {
 
       <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-        ${eventType} ${wichEventType(eventType)}
+        ${getRoutePointWithUpperFirstLetter(eventType)} ${wichEventType(eventType)}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" 
         name="event-destination" value="${cityName}" 
