@@ -2,6 +2,7 @@ import {FiltersType} from "../components/constants.js";
 import {MainFilterComponent} from "../components/main-filter.js";
 import {RenderPosition, render, replace} from "../utils/render.js";
 import {NewEventButtonComponent} from "../components/newEventButtonComponent.js";
+import {getEventsByFilter} from "../utils/filterUtils.js"
 
 class FilterController {
   constructor(container, eventModel) {
@@ -15,15 +16,18 @@ class FilterController {
     this._onDataChange = this._onDataChange.bind(this);
     this._setDefaultFilter = this._setDefaultFilter.bind(this);
     this._newEventButtonComponent.setOnClick(this._setDefaultFilter);
+    this._eventModel.setDataChangeHandler(this._onDataChange);
   }
 
   render() {
     const container = this._container;
+    const allEvents = this._eventModel.getEventsAll();
 
     const filters = Object.values(FiltersType).map((filterType) => {
       return {
         name: filterType,
         checked: filterType === this._activeFilterType,
+        disabled: !getEventsByFilter(allEvents, filterType).length,
       };
     });
 

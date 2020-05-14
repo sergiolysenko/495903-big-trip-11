@@ -73,6 +73,7 @@ class TripController {
         eventController.render(newData, EventControllerMode.DEFAULT);
         this._renderedEventsControllers = [].concat(eventController);
         this._newEventButtonComponent.toggleDisabledNewEvent();
+        this._updateEvents();
       }
     } else if (newData === null) {
       this._eventsModel.removeEvent(oldData.id);
@@ -83,6 +84,7 @@ class TripController {
         eventController.render(newData, EventControllerMode.EDIT);
       } else if (isSuccess) {
         eventController.render(newData, EventControllerMode.DEFAULT);
+        this._updateEvents();
       }
     }
   }

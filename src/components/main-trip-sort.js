@@ -17,12 +17,16 @@ const createMainTripSortTemplate = (currentSortType) => {
       <div class="trip-sort__item  trip-sort__item--event">
         <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio"
         name="trip-sort" value="sort-event" ${isCurrentSortEvent ? `checked` : ``}>
-        <label data-sort-type="${SortType.EVENT}" class="trip-sort__btn" for="sort-event">Event</label>
+        <label data-sort-type="${SortType.EVENT}" 
+        class="trip-sort__btn ${isCurrentSortEvent ? `trip-sort__btn--active  trip-sort__btn--by-increase` : ``}"
+         for="sort-event">Event</label>
       </div>
 
       <div class="trip-sort__item  trip-sort__item--time">
         <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" ${isCurrentTypeTime ? `checked` : ``}>
-        <label data-sort-type="${SortType.TIME}" class="trip-sort__btn" for="sort-time">
+        <label data-sort-type="${SortType.TIME}"
+        class="trip-sort__btn ${isCurrentTypeTime ? `trip-sort__btn--active  trip-sort__btn--by-increase` : ``}"
+        for="sort-time">
           Time
           <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
             <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>
@@ -32,7 +36,9 @@ const createMainTripSortTemplate = (currentSortType) => {
 
       <div class="trip-sort__item  trip-sort__item--price">
         <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price" ${isCurrentTypePrice ? `checked` : ``}>
-        <label data-sort-type="${SortType.PRICE}" class="trip-sort__btn" for="sort-price">
+        <label data-sort-type="${SortType.PRICE}"
+        class="trip-sort__btn ${isCurrentTypePrice ? `trip-sort__btn--active  trip-sort__btn--by-increase` : ``}"
+        for="sort-price">
           Price
           <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
             <path d="M2.888 4.852V9.694H5.588V4.852L7.91 5.068L4.238 0.00999987L0.548 5.068L2.888 4.852Z"/>

@@ -384,6 +384,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
       this._city = destList.value;
       this.rerender();
     });
+
     const priceInput = element.querySelector(`.event__input--price`);
     priceInput.addEventListener(`change`, () => {
       this._price = priceInput.value;
