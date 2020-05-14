@@ -17,10 +17,13 @@ const formatMonth = (month) => `${MONTH_NAMES[month]}`;
 
 const routePointDuration = (start, end) => {
   const difference = moment.utc(moment(end).diff(moment(start)));
-  const diffInHoursAndSec = moment(difference).format(`H[H] mm[M]`);
+  const diffInHours = moment(difference).format(`H`);
+  const diffInMin = moment(difference).format(`mm`);
   const diffInDays = Math.floor(moment.duration(difference).asDays());
   const isDayDiff = diffInDays >= 1 ? diffInDays + `D` : ``;
-  return isDayDiff + ` ` + diffInHoursAndSec;
+  const isHoursDiff = diffInHours > 0 ? diffInHours + `H` : ``;
+  const isMinDiff = diffInMin > 0 ? diffInMin + `M` : ``;
+  return isDayDiff + ` ` + isHoursDiff + ` ` + isMinDiff;
 };
 
 const structureEventsByDays = (eventsList) => {
@@ -59,5 +62,18 @@ const structureEventsByDays = (eventsList) => {
   return arrForDays;
 };
 
+const isFutureEvent = (startDate, dateNow) => {
+  return startDate > dateNow;
+};
+
+const isPastEvent = (endDate, dateNow) => {
+  return endDate < dateNow;
+};
+
+const getRoutePointWithUpperFirstLetter = (routePoint) => {
+  return routePoint[0].toUpperCase() + routePoint.slice(1);
+};
+
 export {randomNumder, formatTime, formatDate,
-  routePointDuration, structureEventsByDays, formatMonth};
+  routePointDuration, structureEventsByDays,
+  formatMonth, isFutureEvent, isPastEvent, getRoutePointWithUpperFirstLetter};

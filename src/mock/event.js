@@ -48,16 +48,17 @@ const generateEvent = () => {
   let endDay = generateNextDate(startDay);
   const randomEventType = Math.random() > 0.5 ? transfer[randomNumder(0, transfer.length - 1)]
     : activities[randomNumder(0, activities.length - 1)];
-  const currentOfferGroup = randomEventType in offersItems ? offersItems[randomEventType] : false;
+  const currentOfferGroup = offersItems.filter((offersGroup) => offersGroup.type === randomEventType);
+
   return {
+    id: String(new Date() + Math.random()),
     eventType: randomEventType,
     city: cityInfo.name,
     startTime: startDay,
     endTime: endDay,
     price: randomNumder(10, 1500),
     isFavorite: Math.random() < 0.5,
-    offers: currentOfferGroup ? currentOfferGroup.slice(0, randomNumder(0, currentOfferGroup.length)) : [],
-    dayRoute: true,
+    offers: !currentOfferGroup.length ? [] : currentOfferGroup[0].offers.slice(0, randomNumder(0, currentOfferGroup.length)),
   };
 };
 
