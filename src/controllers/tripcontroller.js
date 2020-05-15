@@ -1,11 +1,11 @@
 import {structureEventsByDays} from "../utils/common.js";
 import {RenderPosition, render} from "../utils/render.js";
-import {MainTripSortComponent, SortType} from "../components/main-trip-sort.js";
-import {NoPoints} from "../components/no-points.js";
-import {TripDaysComponent} from "../components/tripdays-container.js";
-import {TripDayComponent} from "../components/tripday-container.js";
-import {EventController, Mode as EventControllerMode, emptyEvent} from "./eventController.js";
-import {NewEventButtonComponent} from "../components/newEventButtonComponent.js";
+import MainTripSortComponent, {SortType} from "../components/main-trip-sort.js";
+import NoPoints from "../components/no-points.js";
+import TripDaysComponent from "../components/tripdays-container.js";
+import TripDayComponent from "../components/tripday-container.js";
+import EventController, {Mode as EventControllerMode, emptyEvent} from "./eventController.js";
+import NewEventButtonComponent from "../components/newEventButtonComponent.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -25,7 +25,7 @@ const getSortedEvents = (events, sortType) => {
   return sortedEvents;
 };
 
-class TripController {
+export default class TripController {
   constructor(container, eventsModel) {
     this._container = container;
     this._eventsModel = eventsModel;
@@ -47,6 +47,18 @@ class TripController {
     this._onFilterChange = this._onFilterChange.bind(this);
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
     this._newEventButtonComponent.setOnClick(this._onCreateNewEvent);
+  }
+
+  hide() {
+    this._container.classList.add(`trip-events--hidden`);
+    this._currentTypeSort = SortType.EVENT;
+    this._mainTripSortComponent.setDefaultSortType();
+    this._mainTripSortComponent.rerender();
+    this._onViewChange();
+  }
+
+  show() {
+    this._container.classList.remove(`trip-events--hidden`);
   }
 
   renderTrip() {
@@ -129,9 +141,9 @@ class TripController {
   }
 
   _onCreateNewEvent() {
+    this.show();
     this._newEventButtonComponent.toggleDisabledNewEvent();
     this._onFilterChange();
-    this._onViewChange();
     this.createEvent();
   }
 
@@ -175,4 +187,3 @@ class TripController {
   }
 }
 
-export {TripController};

@@ -3,6 +3,27 @@ const routePoints = {
   activities: [`check-in`, `sightseeing`, `restaurant`],
 };
 
+const TypeIcon = {
+  'taxi': `🚕`,
+  'bus': `🚌`,
+  'train': `🚂`,
+  'ship': `🚢`,
+  'transport': `🚙`,
+  'drive': `🚗`,
+  'flight': `✈️`,
+  'check-in': `🏨`,
+  'sightseeing': `🏛️`,
+  'restaurant': `🍴`
+};
+
+const ChartType = {
+  MONEY: `MONEY`,
+  TRANSPORT: `TRANSPORT`,
+  TIME_SPENT: `TIME SPENT`,
+};
+
+const BAR_HEIGHT = 55;
+
 const cities = [`Amsterdam`, `Moscow`, `Bruge`, `Paris`, `Boston`];
 const offersItems = [
   {
@@ -85,4 +106,5 @@ const FiltersType = {
   PAST: `past`,
 };
 
-export {routePoints, cities, offersItems, MONTH_NAMES, FiltersType};
+export {routePoints, cities, offersItems,
+  BAR_HEIGHT, MONTH_NAMES, FiltersType, TypeIcon, ChartType};

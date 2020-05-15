@@ -1,9 +1,9 @@
-import {MainInfoComponent} from "../components/main-info.js";
+import MainInfoComponent from "../components/main-info.js";
 import {getFirstDayOfRoute, getLastDayOfRoute, getFirstMonthOfRoute,
-  getLastMonthOfRoute, getTotalCost, getAllCityOnRoute} from "../utils/info.js"
+  getLastMonthOfRoute, getTotalCost, getAllCityOnRoute} from "../utils/info.js";
 import {replace, render, RenderPosition} from "../utils/render.js";
 
-export class MainInfoController {
+export default class MainInfoController {
   constructor(container, eventsModel) {
     this._container = container;
     this._eventsModel = eventsModel;

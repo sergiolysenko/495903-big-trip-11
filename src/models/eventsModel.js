@@ -1,7 +1,7 @@
-import {getEventsByFilter} from "../utils/filterUtils.js";
+import {getEventsByFilter} from "../utils/filter.js";
 import {FiltersType} from "../components/constants.js";
 
-class EventsModel {
+export default class EventsModel {
   constructor() {
     this._events = [];
     this._activeFilterType = FiltersType.EVERYTHING;
@@ -68,4 +68,4 @@ class EventsModel {
     handlers.forEach((handler) => handler());
   }
 }
-export {EventsModel};
+

@@ -1,4 +1,4 @@
-import {AbstractSmartComponent} from "./abstractSmartComponent.js";
+import AbstractSmartComponent from "./abstractSmartComponent.js";
 
 const SortType = {
   EVENT: `event`,
@@ -50,7 +50,7 @@ const createMainTripSortTemplate = (currentSortType) => {
     </form>`);
 };
 
-class MainTripSortComponent extends AbstractSmartComponent {
+export default class MainTripSortComponent extends AbstractSmartComponent {
   constructor() {
     super();
     this._currentTypeSort = SortType.EVENT;
@@ -95,4 +95,4 @@ class MainTripSortComponent extends AbstractSmartComponent {
   }
 }
 
-export {MainTripSortComponent, SortType};
+export {SortType};

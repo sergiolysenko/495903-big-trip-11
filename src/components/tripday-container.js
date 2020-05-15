@@ -1,5 +1,5 @@
 import {formatMonth} from "../utils/common.js";
-import {AbstractComponent} from "./abstractComponent.js";
+import AbstractComponent from "./abstractComponent.js";
 
 const createTripDay = (tripDay) => {
   const {day, month, year, dayNumber} = tripDay || {};
@@ -21,7 +21,7 @@ const createTripDay = (tripDay) => {
 };
 
 
-export class TripDayComponent extends AbstractComponent {
+export default class TripDayComponent extends AbstractComponent {
   constructor(tripDay) {
     super();
     this._tripDay = tripDay;

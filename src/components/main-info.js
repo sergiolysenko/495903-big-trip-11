@@ -1,17 +1,28 @@
-import {AbstractComponent} from "./abstractComponent.js";
+import AbstractComponent from "./abstractComponent.js";
+
+const CitiesCount = {
+  ONE: 1,
+  TWO: 2,
+  THREE: 3,
+};
+const IndexOfCity = {
+  FIRST: 0,
+  SECOND: 1,
+  THIRD: 2,
+};
 
 const generateCitiesRoute = (citiesList) => {
   switch (citiesList.length) {
-    case 1:
-      return `<h1 class="trip-info__title">${citiesList[0]}</h1>`;
-    case 2:
-      return `<h1 class="trip-info__title">${citiesList[0]} 
-      &mdash; ${citiesList[1]} </h1>`;
-    case 3:
-      return `<h1 class="trip-info__title">${citiesList[0]} 
-      &mdash; ${citiesList[1]} &mdash; ${citiesList[2]}</h1>`;
+    case CitiesCount.ONE:
+      return `<h1 class="trip-info__title">${citiesList[IndexOfCity.FIRST]}</h1>`;
+    case CitiesCount.TWO:
+      return `<h1 class="trip-info__title">${citiesList[IndexOfCity.FIRST]} 
+      &mdash; ${citiesList[IndexOfCity.SECOND]} </h1>`;
+    case CitiesCount.THREE:
+      return `<h1 class="trip-info__title">${citiesList[IndexOfCity.FIRST]} 
+      &mdash; ${citiesList[IndexOfCity.SECOND]} &mdash; ${citiesList[IndexOfCity.THIRD]}</h1>`;
     default:
-      return `<h1 class="trip-info__title">${citiesList[0]} 
+      return `<h1 class="trip-info__title">${citiesList[IndexOfCity.FIRST]} 
       &mdash; ... &mdash; ${citiesList[citiesList.length - 1]}</h1>`;
   }
 };
@@ -39,7 +50,7 @@ const createMainInfoTemplate = (routeData) => {
     </section>`);
 };
 
-export class MainInfoComponent extends AbstractComponent {
+export default class MainInfoComponent extends AbstractComponent {
   constructor(routeData) {
     super();
     this._routeData = routeData;

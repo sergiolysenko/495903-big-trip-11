@@ -1,4 +1,4 @@
-import {AbstractComponent} from "./abstractComponent.js";
+import AbstractComponent from "./abstractComponent.js";
 
 const MenuItem = {
   TABLE: `trip-tabs__btn--table`,
@@ -11,7 +11,7 @@ const createMainNavTemplate = () => {
   <a class="trip-tabs__btn" id="trip-tabs__btn--stats" href="#">Stats</a>
   </nav>`);
 };
-class MainNavComponent extends AbstractComponent {
+export default class MainNavComponent extends AbstractComponent {
   getTemplate() {
     return createMainNavTemplate();
   }
@@ -37,5 +37,5 @@ class MainNavComponent extends AbstractComponent {
     });
   }
 }
-export {MenuItem, MainNavComponent};
+export {MenuItem};
 

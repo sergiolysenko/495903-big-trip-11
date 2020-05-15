@@ -1,4 +1,4 @@
-export class NewEventButtonComponent {
+export default class NewEventButtonComponent {
   constructor() {
     this._newEventButton = document.querySelector(`.trip-main__event-add-btn`);
   }
