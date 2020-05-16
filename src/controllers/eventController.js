@@ -1,6 +1,6 @@
 import {RenderPosition, render, remove, replace} from "../utils/render.js";
-import {EventItemComponent} from "../components/event-item.js";
-import {EventItemEditComponent} from "../components/event-edit.js";
+import EventItemComponent from "../components/event-item.js";
+import EventItemEditComponent from "../components/event-edit.js";
 
 const Mode = {
   NEW_EVENT: `new`,
@@ -19,7 +19,7 @@ const emptyEvent = {
   newEmptyEvent: true,
 };
 
-class EventController {
+export default class EventController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
@@ -129,4 +129,4 @@ class EventController {
     }
   }
 }
-export {EventController, Mode, emptyEvent};
+export {Mode, emptyEvent};

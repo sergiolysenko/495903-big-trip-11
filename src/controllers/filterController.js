@@ -1,9 +1,10 @@
 import {FiltersType} from "../components/constants.js";
-import {MainFilterComponent} from "../components/main-filter.js";
+import MainFilterComponent from "../components/main-filter.js";
 import {RenderPosition, render, replace} from "../utils/render.js";
-import {NewEventButtonComponent} from "../components/newEventButtonComponent.js";
+import NewEventButtonComponent from "../components/newEventButtonComponent.js";
+import {getEventsByFilter} from "../utils/filter.js";
 
-class FilterController {
+export default class FilterController {
   constructor(container, eventModel) {
     this._container = container;
     this._eventModel = eventModel;
@@ -13,17 +14,20 @@ class FilterController {
     this._filterComponent = null;
     this._onFilterChange = this._onFilterChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
-    this._setDefaultFilter = this._setDefaultFilter.bind(this);
-    this._newEventButtonComponent.setOnClick(this._setDefaultFilter);
+    this.setDefaultFilter = this.setDefaultFilter.bind(this);
+    this._newEventButtonComponent.setOnClick(this.setDefaultFilter);
+    this._eventModel.setDataChangeHandler(this._onDataChange);
   }
 
   render() {
     const container = this._container;
+    const allEvents = this._eventModel.getEventsAll();
 
     const filters = Object.values(FiltersType).map((filterType) => {
       return {
         name: filterType,
         checked: filterType === this._activeFilterType,
+        disabled: !getEventsByFilter(allEvents, filterType).length,
       };
     });
 
@@ -42,7 +46,7 @@ class FilterController {
     this._activeFilterType = filterType;
   }
 
-  _setDefaultFilter() {
+  setDefaultFilter() {
     this._eventModel.setFilter(FiltersType.EVERYTHING);
     this._activeFilterType = FiltersType.EVERYTHING;
     this._onDataChange();
@@ -53,4 +57,3 @@ class FilterController {
   }
 }
 
-export {FilterController};

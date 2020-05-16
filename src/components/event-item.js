@@ -1,6 +1,6 @@
 import {routePoints} from "./constants.js";
 import {formatTime, routePointDuration, getRoutePointWithUpperFirstLetter} from "../utils/common.js";
-import {AbstractComponent} from "./abstractComponent.js";
+import AbstractComponent from "./abstractComponent.js";
 
 const generateOffers = (offers) => {
 
@@ -51,7 +51,7 @@ const createEventItemTemplate = (event) => {
     </li>`);
 };
 
-export class EventItemComponent extends AbstractComponent {
+export default class EventItemComponent extends AbstractComponent {
   constructor(event) {
     super();
     this._event = event;

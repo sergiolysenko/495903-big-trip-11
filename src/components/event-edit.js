@@ -1,6 +1,6 @@
 import {routePoints, cities, offersItems} from "./constants.js";
 import {formatDate, getRoutePointWithUpperFirstLetter} from "../utils/common.js";
-import {AbstractSmartComponent} from "./abstractSmartComponent.js";
+import AbstractSmartComponent from "./abstractSmartComponent.js";
 import {citiesInfo} from "../mock/event.js";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
@@ -232,7 +232,7 @@ const createEventEditTemplate = (event, options = {}) => {
     </li>`);
 };
 
-export class EventItemEditComponent extends AbstractSmartComponent {
+export default class EventItemEditComponent extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
@@ -384,6 +384,7 @@ export class EventItemEditComponent extends AbstractSmartComponent {
       this._city = destList.value;
       this.rerender();
     });
+
     const priceInput = element.querySelector(`.event__input--price`);
     priceInput.addEventListener(`change`, () => {
       this._price = priceInput.value;

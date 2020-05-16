@@ -26,6 +26,12 @@ const routePointDuration = (start, end) => {
   return isDayDiff + ` ` + isHoursDiff + ` ` + isMinDiff;
 };
 
+const routePointDurationInHours = (start, end) => {
+  const startTime = moment(start);
+  const endTime = moment(end);
+  return endTime.diff(startTime, `hours`);
+};
+
 const structureEventsByDays = (eventsList) => {
   let arrForDays = new Array(``);
 
@@ -76,4 +82,5 @@ const getRoutePointWithUpperFirstLetter = (routePoint) => {
 
 export {randomNumder, formatTime, formatDate,
   routePointDuration, structureEventsByDays,
-  formatMonth, isFutureEvent, isPastEvent, getRoutePointWithUpperFirstLetter};
+  formatMonth, isFutureEvent, isPastEvent,
+  getRoutePointWithUpperFirstLetter, routePointDurationInHours};

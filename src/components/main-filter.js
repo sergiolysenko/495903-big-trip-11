@@ -1,4 +1,4 @@
-import {AbstractComponent} from "./abstractComponent.js";
+import AbstractComponent from "./abstractComponent.js";
 
 const FILTER_ID_PREFIX = `filter-`;
 
@@ -7,10 +7,12 @@ const getFilterNameById = (id) => {
 };
 
 const createFilterMarkup = (filter) => {
-  const {name, checked} = filter;
+  const {name, checked, disabled} = filter;
   const isChecked = checked ? `checked` : ``;
+  const isDisabled = disabled ? `disabled` : ``;
   return `<div class="trip-filters__filter">
-      <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked}>
+      <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden"
+       type="radio" name="trip-filter" value="${name}" ${isChecked} ${isDisabled}>
       <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>
     </div>`;
 };
@@ -23,7 +25,7 @@ const createMainFilterTemplate = (filters) => {
     </form>`);
 };
 
-export class MainFilterComponent extends AbstractComponent {
+export default class MainFilterComponent extends AbstractComponent {
   constructor(filters) {
     super();
 
