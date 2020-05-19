@@ -6,6 +6,7 @@ import TripDaysComponent from "../components/tripdays-container.js";
 import TripDayComponent from "../components/tripday-container.js";
 import EventController, {Mode as EventControllerMode, emptyEvent} from "./eventController.js";
 import NewEventButtonComponent from "../components/newEventButtonComponent.js";
+import {MenuItem} from "../components/constants.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -26,10 +27,11 @@ const getSortedEvents = (events, sortType) => {
 };
 
 export default class TripController {
-  constructor(container, eventsModel) {
+  constructor(container, eventsModel, mainNavComponent, api) {
     this._container = container;
     this._eventsModel = eventsModel;
-
+    this._api = api;
+    this._mainNavComponent = mainNavComponent;
     this._currentTypeSort = SortType.EVENT;
     this._renderedEventsControllers = null;
     this._noPointsComponent = new NoPoints();
@@ -81,23 +83,32 @@ export default class TripController {
         this._updateEvents();
         this._newEventButtonComponent.toggleDisabledNewEvent();
       } else {
-        this._eventsModel.addEvent(newData);
-        eventController.render(newData, EventControllerMode.DEFAULT);
-        this._renderedEventsControllers = [].concat(eventController);
-        this._newEventButtonComponent.toggleDisabledNewEvent();
-        this._updateEvents();
+        this._api.createEvent(newData)
+          .then((eventModel) => {
+            this._eventsModel.addEvent(eventModel);
+            eventController.render(eventModel, EventControllerMode.DEFAULT);
+            this._renderedEventsControllers = [].concat(eventController);
+            this._newEventButtonComponent.toggleDisabledNewEvent();
+            this._updateEvents();
+          });
       }
     } else if (newData === null) {
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+        });
     } else {
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
-      if (isSuccess && dontClose) {
-        eventController.render(newData, EventControllerMode.EDIT);
-      } else if (isSuccess) {
-        eventController.render(newData, EventControllerMode.DEFAULT);
-        this._updateEvents();
-      }
+      this._api.updateEvent(oldData.id, newData)
+        .then((eventModel) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, eventModel);
+          if (isSuccess && dontClose) {
+            eventController.render(newData, EventControllerMode.EDIT);
+          } else if (isSuccess) {
+            eventController.render(newData, EventControllerMode.DEFAULT);
+            this._updateEvents();
+          }
+        });
     }
   }
 
@@ -125,7 +136,7 @@ export default class TripController {
     }
 
     const eventsListElement = document.querySelector(`.trip-events__list`);
-    this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
+    this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange, this._eventsModel);
     this._creatingEvent.render(emptyEvent, EventControllerMode.NEW_EVENT);
   }
 
@@ -142,6 +153,7 @@ export default class TripController {
 
   _onCreateNewEvent() {
     this.show();
+    this._mainNavComponent.setActiveItem(MenuItem.TABLE);
     this._newEventButtonComponent.toggleDisabledNewEvent();
     this._onFilterChange();
     this.createEvent();
@@ -159,7 +171,7 @@ export default class TripController {
     const eventsListElement = tripDayComponent.getElement()
     .querySelector(`.trip-events__list`);
     return eventsList.map((event) => {
-      const eventController = new EventController(eventsListElement, onDataChange, onViewChange);
+      const eventController = new EventController(eventsListElement, onDataChange, onViewChange, this._eventsModel);
       eventController.render(event, EventControllerMode.DEFAULT);
 
       return eventController;

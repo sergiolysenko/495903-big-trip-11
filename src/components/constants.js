@@ -24,6 +24,11 @@ const ChartType = {
 
 const BAR_HEIGHT = 55;
 
+const MenuItem = {
+  TABLE: `trip-tabs__btn--table`,
+  STATS: `trip-tabs__btn--stats`,
+};
+
 const cities = [`Amsterdam`, `Moscow`, `Bruge`, `Paris`, `Boston`];
 const offersItems = [
   {
@@ -107,4 +112,5 @@ const FiltersType = {
 };
 
 export {routePoints, cities, offersItems,
-  BAR_HEIGHT, MONTH_NAMES, FiltersType, TypeIcon, ChartType};
+  BAR_HEIGHT, MONTH_NAMES, FiltersType,
+  MenuItem, TypeIcon, ChartType};

@@ -15,16 +15,18 @@ const generateOffers = (offers) => {
 };
 
 const createEventItemTemplate = (event) => {
-  const {eventType, city, startTime, endTime, price, offers} = event;
+  const {type, city, startTime, endTime, price, offers} = event;
   const isOfferShowing = !offers.lenght;
-  const wichEventType = routePoints.transfer.includes(eventType) ? `transfer` : `activities`;
+  const wichEventType = routePoints.transfer.includes(type) ? `transfer` : `activities`;
 
   return (`<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType}.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${getRoutePointWithUpperFirstLetter(eventType)} ${wichEventType === `transfer` ? `to` : `in`} ${city}</h3>
+        <h3 class="event__title">
+        ${getRoutePointWithUpperFirstLetter(type)} ${wichEventType === `transfer` ? `to` : `in`} 
+        ${city.name}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

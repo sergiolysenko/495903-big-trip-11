@@ -35,7 +35,7 @@ const getTotalCost = (events) => {
 
 const getAllCityOnRoute = (events) => {
   const sortedByFirstDay = getSortedEventsByDay(events);
-  const citiesList = sortedByFirstDay.map((event) => event.city);
+  const citiesList = sortedByFirstDay.map((event) => event.city.name);
   return citiesList;
 };
 

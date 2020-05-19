@@ -23,7 +23,9 @@ const generateChartConfig = (types, dataOfChart, chartType) => {
         data: dataOfChart,
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        anchor: `start`,
+        minBarLength: 50,
+        barThickness: 44,
       }]
     },
     options: {
@@ -59,7 +61,6 @@ const generateChartConfig = (types, dataOfChart, chartType) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -70,7 +71,6 @@ const generateChartConfig = (types, dataOfChart, chartType) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 50
         }],
       },
       legend: {

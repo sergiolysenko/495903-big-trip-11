@@ -14,8 +14,11 @@ export default class MainInfoController {
   }
 
   render() {
-    const container = this._container;
     const allEvents = this._eventsModel.getEventsAll();
+    if (!allEvents.length) {
+      return;
+    }
+    const container = this._container;
     const routeData = {
       firstDayOfRoute: getFirstDayOfRoute(allEvents),
       lastDayOfRoute: getLastDayOfRoute(allEvents),
