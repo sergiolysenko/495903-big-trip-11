@@ -13,8 +13,8 @@ export default class EventModel {
   toRAW() {
     return {
       "base_price": this.price,
-      "date_from": this.startTime,
-      "date_to": this.endTime,
+      "date_from": this.startTime.toISOString(),
+      "date_to": this.endTime.toISOString(),
       "destination": this.city,
       "id": this.id,
       "is_favorite": this.isFavorite,

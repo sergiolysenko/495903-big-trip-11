@@ -1,8 +1,13 @@
 import {routePoints} from "./constants.js";
 import {formatDate, getRoutePointWithUpperFirstLetter, getCheckedOffersText, getCheckedOffers} from "../utils/common.js";
-import AbstractSmartComponent from "./abstractSmartComponent.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
 
 const createTransferList = (routePointsItems, event) => {
   return routePointsItems.map((routePoint, index) => {
@@ -84,9 +89,12 @@ const createDestinationInfoMarkup = (descriptionText, photos) => {
 
 const createEventEditTemplate = (event, options = {}) => {
   const {isFavorite, newEmptyEvent = false} = event;
-  const {type, city, price, offers, startTime, endTime, cities, citiesInfo, currentOfferGroup} = options;
+  const {type, city, price, offers, startTime, endTime, cities,
+    citiesInfo, currentOfferGroup, externalData} = options;
   const isReadyToSave = !!price && !!city.name && !!startTime && !!endTime;
   const isNewEvent = newEmptyEvent;
+  const deleteButtonText = externalData.deleteButtonText;
+  const saveButtonText = externalData.saveButtonText;
 
   const isCityFieldEmpty = !city.name;
 
@@ -168,8 +176,8 @@ const createEventEditTemplate = (event, options = {}) => {
         name="event-price" value="${price}">
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit" ${isReadyToSave ? `` : `disabled`}>Save</button>
-      <button class="event__reset-btn" type="reset">${isNewEvent ? `Cancel` : `Delete`}</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${isReadyToSave ? `` : `disabled`}>${saveButtonText}</button>
+      <button class="event__reset-btn" type="reset">${isNewEvent ? `Cancel` : `${deleteButtonText}`}</button>
       ${isNewEvent ? `` :
       `<input id="event-favorite-1" class="event__favorite-checkbox  
       visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
@@ -206,6 +214,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
     this._startTime = event.startTime;
     this._endTime = event.endTime;
     this._eventsModel = eventsModel;
+    this._externalData = DefaultData;
     this._cities = this._eventsModel.getCitiesList();
     this._citiesInfo = this._eventsModel.getDestinations();
     this._currentOfferGroup = this._eventsModel.getOffersForType(this._type);
@@ -230,6 +239,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
       cities: this._cities,
       citiesInfo: this._citiesInfo,
       currentOfferGroup: this._currentOfferGroup,
+      externalData: this._externalData,
     });
   }
 
@@ -266,6 +276,28 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
     this._price = event.price;
     this._startTime = event.startTime;
     this._endTime = event.endTime;
+    this._currentOfferGroup = this._eventsModel.getOffersForType(this._type);
+    this.rerender();
+  }
+
+  blockForm() {
+    const buttons = this.getElement().querySelectorAll(`button`);
+    const formInputs = Array.from(this.getElement().querySelectorAll(`input`));
+    formInputs.forEach((input) => {
+      input.disabled = true;
+    });
+    buttons.forEach((button) => {
+      button.disabled = true;
+    });
+  }
+
+  onErrorRedBorder() {
+    const form = this.getElement().querySelector(`.event--edit`);
+    form.style.outline = `4px solid red`;
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
     this.rerender();
   }
 
@@ -301,6 +333,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
     const form = this.getElement().querySelector(`.event--edit`);
     return new FormData(form);
   }
+
   _onTypeChange() {
     this._offers = this._event.offers;
     this._currentOfferGroup = this._eventsModel.getOffersForType(this._type);

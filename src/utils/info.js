@@ -29,8 +29,14 @@ const getLastMonthOfRoute = (events) => {
   return formatMonth(lastMonthOfRoute);
 };
 
+const getOffersCost = (event) => {
+  return event.offers.reduce((sum, offer) => sum + offer.price, 0);
+}
+
 const getTotalCost = (events) => {
-  return events.reduce((sum, event) => sum + +event.price, 0);
+  const offersCost = events.reduce((sum, event) => sum + getOffersCost(event), 0);
+  const eventPrice = events.reduce((sum, event) => sum + Number(event.price), 0);
+  return offersCost + eventPrice;
 };
 
 const getAllCityOnRoute = (events) => {

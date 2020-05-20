@@ -1,12 +1,10 @@
 import {structureEventsByDays} from "../utils/common.js";
-import {RenderPosition, render} from "../utils/render.js";
+import {RenderPosition, render, remove} from "../utils/render.js";
 import MainTripSortComponent, {SortType} from "../components/main-trip-sort.js";
 import NoPoints from "../components/no-points.js";
 import TripDaysComponent from "../components/tripdays-container.js";
 import TripDayComponent from "../components/tripday-container.js";
-import EventController, {Mode as EventControllerMode, emptyEvent} from "./eventController.js";
-import NewEventButtonComponent from "../components/newEventButtonComponent.js";
-import {MenuItem} from "../components/constants.js";
+import EventController, {Mode as EventControllerMode, emptyEvent} from "./event-controller.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -27,28 +25,26 @@ const getSortedEvents = (events, sortType) => {
 };
 
 export default class TripController {
-  constructor(container, eventsModel, mainNavComponent, api) {
+  constructor(container, eventsModel, newEventButtonComponent, api) {
     this._container = container;
     this._eventsModel = eventsModel;
     this._api = api;
-    this._mainNavComponent = mainNavComponent;
     this._currentTypeSort = SortType.EVENT;
     this._renderedEventsControllers = null;
     this._noPointsComponent = new NoPoints();
     this._mainTripSortComponent = new MainTripSortComponent();
     this._tripDaysComponent = new TripDaysComponent();
     this._tripDayComponent = new TripDayComponent();
-    this._newEventButtonComponent = new NewEventButtonComponent();
+    this._newEventButtonComponent = newEventButtonComponent;
     this._creatingEvent = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
-    this._onCreateNewEvent = this._onCreateNewEvent.bind(this);
+    this.onCreateNewEvent = this.onCreateNewEvent.bind(this);
     this._mainTripSortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
     this._onFilterChange = this._onFilterChange.bind(this);
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
-    this._newEventButtonComponent.setOnClick(this._onCreateNewEvent);
   }
 
   hide() {
@@ -65,13 +61,14 @@ export default class TripController {
 
   renderTrip() {
     const events = this._eventsModel.getEvents();
+    this._container.querySelector(`.loading`).classList.add(`visually-hidden`);
     const isNoEvents = !events.length;
+    render(this._container, this._tripDaysComponent, RenderPosition.BEFOREEND);
     if (isNoEvents) {
       render(this._container, this._noPointsComponent, RenderPosition.BEFOREEND);
       return;
     }
-    render(this._container, this._mainTripSortComponent, RenderPosition.BEFOREEND);
-    render(this._container, this._tripDaysComponent, RenderPosition.BEFOREEND);
+    render(this._container, this._mainTripSortComponent, RenderPosition.AFTERBEGIN);
     this._renderDays(events, this._currentTypeSort);
   }
 
@@ -90,6 +87,9 @@ export default class TripController {
             this._renderedEventsControllers = [].concat(eventController);
             this._newEventButtonComponent.toggleDisabledNewEvent();
             this._updateEvents();
+          })
+          .catch(() => {
+            eventController.shake();
           });
       }
     } else if (newData === null) {
@@ -97,6 +97,9 @@ export default class TripController {
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
+        })
+        .catch(() => {
+          eventController.shake();
         });
     } else {
       this._api.updateEvent(oldData.id, newData)
@@ -108,6 +111,9 @@ export default class TripController {
             eventController.render(newData, EventControllerMode.DEFAULT);
             this._updateEvents();
           }
+        })
+        .catch(() => {
+          eventController.shake();
         });
     }
   }
@@ -122,7 +128,9 @@ export default class TripController {
   }
 
   _onViewChange() {
-    this._renderedEventsControllers.forEach((renderedEvent) => renderedEvent.setDefaultView());
+    if (this._renderedEventsControllers) {
+      this._renderedEventsControllers.forEach((renderedEvent) => renderedEvent.setDefaultView());
+    }
     if (this._creatingEvent) {
       this._creatingEvent.destroy();
       this._creatingEvent = null;
@@ -134,14 +142,24 @@ export default class TripController {
     if (this._creatingEvent) {
       return;
     }
+    if (!document.querySelector(`.trip-events__list`)) {
+      const tripDaysBlock = this._container.querySelector(`.trip-days`);
+      const tripDayComponent = new TripDayComponent();
+      remove(this._noPointsComponent);
+      render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+    }
 
-    const eventsListElement = document.querySelector(`.trip-events__list`);
-    this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange, this._eventsModel);
+    const container = document.querySelector(`.trip-events__list`);
+
+    this._creatingEvent = new EventController(container, this._onDataChange, this._onViewChange, this._eventsModel);
+
     this._creatingEvent.render(emptyEvent, EventControllerMode.NEW_EVENT);
   }
 
   _removeEvents() {
-    this._renderedEventsControllers.forEach((renderedEvent) => renderedEvent.destroy());
+    if (this._renderedEventsControllers) {
+      this._renderedEventsControllers.forEach((renderedEvent) => renderedEvent.destroy());
+    }
     this._renderedEventsControllers = [];
     this._tripDaysComponent.getElement().innerHTML = ``;
   }
@@ -151,9 +169,7 @@ export default class TripController {
     this._renderDays(this._eventsModel.getEvents(), this._currentTypeSort);
   }
 
-  _onCreateNewEvent() {
-    this.show();
-    this._mainNavComponent.setActiveItem(MenuItem.TABLE);
+  onCreateNewEvent() {
     this._newEventButtonComponent.toggleDisabledNewEvent();
     this._onFilterChange();
     this.createEvent();

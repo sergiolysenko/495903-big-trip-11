@@ -930,3 +930,11 @@ main {
 
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }
+
+.loading {
+  border: 1px solid red;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: larger;
+  font-weight: bold;
+}

@@ -1,4 +1,4 @@
-import AbstractComponent from "./abstractComponent.js";
+import AbstractComponent from "./abstract-component.js";
 import {MenuItem} from "../components/constants.js";
 
 const createMainNavTemplate = () => {

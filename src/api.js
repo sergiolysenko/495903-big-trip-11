@@ -1,4 +1,4 @@
-import EventModel from "./models/eventModel.js";
+import EventModel from "./models/event-model.js";
 
 const ApiUrlOptions = {
   POINTS: `https://11.ecmascript.pages.academy/big-trip/points`,
