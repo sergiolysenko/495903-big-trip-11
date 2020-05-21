@@ -1,8 +1,10 @@
 import {RenderPosition, render, remove, replace} from "../utils/render.js";
 import {getCheckedOffersText, getCheckedOffers, getPhotosTape} from "../utils/common.js";
-import EventModel from "../models/eventModel.js";
+import EventModel from "../models/event-model.js";
 import EventItemComponent from "../components/event-item.js";
 import EventItemEditComponent from "../components/event-edit.js";
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 const Mode = {
   NEW_EVENT: `new`,
@@ -85,10 +87,18 @@ export default class EventController {
       evt.preventDefault();
       const formData = this._eventEditComponent.getData();
       const data = parseFormData(formData, event.id, this._eventsModel, this._eventEditComponent.getElement());
+      this._eventEditComponent.setData({
+        saveButtonText: `Saving...`,
+      });
+      this._eventEditComponent.blockForm();
       this._onDataChange(this, event, data);
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
+      this._eventEditComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+      this._eventEditComponent.blockForm();
       this._onDataChange(this, event, null);
     });
 
@@ -128,6 +138,21 @@ export default class EventController {
     remove(this._eventEditComponent);
     remove(this._eventComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
+  shake() {
+    this._eventEditComponent.setData({
+      saveButtonText: `Save`,
+      deleteButtonText: `Delete`,
+    });
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+      this._eventEditComponent.onErrorRedBorder();
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _replaceEventToEdit() {

@@ -1,21 +1,18 @@
 import {FiltersType} from "../components/constants.js";
 import MainFilterComponent from "../components/main-filter.js";
 import {RenderPosition, render, replace} from "../utils/render.js";
-import NewEventButtonComponent from "../components/newEventButtonComponent.js";
 import {getEventsByFilter} from "../utils/filter.js";
 
 export default class FilterController {
   constructor(container, eventModel) {
     this._container = container;
     this._eventModel = eventModel;
-    this._newEventButtonComponent = new NewEventButtonComponent();
 
     this._activeFilterType = FiltersType.EVERYTHING;
     this._filterComponent = null;
     this._onFilterChange = this._onFilterChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this.setDefaultFilter = this.setDefaultFilter.bind(this);
-    this._newEventButtonComponent.setOnClick(this.setDefaultFilter);
     this._eventModel.setDataChangeHandler(this._onDataChange);
   }
 

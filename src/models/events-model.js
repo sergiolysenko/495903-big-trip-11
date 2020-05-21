@@ -53,6 +53,9 @@ export default class EventsModel {
   }
 
   setEvents(events) {
+    if (!events) {
+      return;
+    }
     this._events = Array.from(events);
     this._callHandlers(this._dataChangeHandlers);
   }
