@@ -10,8 +10,9 @@ import {MenuItem} from "./components/constants.js";
 import NewEventButtonComponent from "./components/new-event-button.js";
 
 const AUTHORIZATION = `Basic ShdgajSS1set1i23HSDGJn2h@@`;
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 
-const api = new API(AUTHORIZATION);
+const api = new API(END_POINT, AUTHORIZATION);
 const eventsModel = new EventsModel();
 
 // Рендер блока инфо в шапке Маршрут и даты
