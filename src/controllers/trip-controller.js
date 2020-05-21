@@ -62,14 +62,22 @@ export default class TripController {
   renderTrip() {
     const events = this._eventsModel.getEvents();
     this._container.querySelector(`.loading`).classList.add(`visually-hidden`);
-    const isNoEvents = !events.length;
     render(this._container, this._tripDaysComponent, RenderPosition.BEFOREEND);
+    render(this._container, this._mainTripSortComponent, RenderPosition.AFTERBEGIN);
+    const isNoEvents = !events.length;
     if (isNoEvents) {
       render(this._container, this._noPointsComponent, RenderPosition.BEFOREEND);
       return;
     }
-    render(this._container, this._mainTripSortComponent, RenderPosition.AFTERBEGIN);
     this._renderDays(events, this._currentTypeSort);
+  }
+
+  onNoEvents(events) {
+    const isNoEvents = !events.length;
+    if (isNoEvents) {
+      render(this._container, this._noPointsComponent, RenderPosition.BEFOREEND);
+      return;
+    }
   }
 
   _onDataChange(eventController, oldData, newData, dontClose = false) {
@@ -79,6 +87,7 @@ export default class TripController {
         eventController.destroy();
         this._updateEvents();
         this._newEventButtonComponent.toggleDisabledNewEvent();
+        this.onNoEvents(this._eventsModel.getEventsAll());
       } else {
         this._api.createEvent(newData)
           .then((eventModel) => {
@@ -97,6 +106,7 @@ export default class TripController {
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
+          this.onNoEvents(this._eventsModel.getEventsAll());
         })
         .catch(() => {
           eventController.shake();
