@@ -31,7 +31,7 @@ const getLastMonthOfRoute = (events) => {
 
 const getOffersCost = (event) => {
   return event.offers.reduce((sum, offer) => sum + offer.price, 0);
-}
+};
 
 const getTotalCost = (events) => {
   const offersCost = events.reduce((sum, event) => sum + getOffersCost(event), 0);
