@@ -1,22 +1,21 @@
-import MainNavComponent, {MenuItem} from "./components/main-nav.js";
-import {generateEvents} from "./mock/event.js";
-import {RenderPosition, render} from "./utils/render.js";
-import TripController from "./controllers/tripcontroller.js";
+import API from "./api.js";
 import EventsModel from "./models/eventsModel";
 import FilterController from "./controllers/filterController.js";
-import MainInfoController from "./controllers/infoController.js";
+import {RenderPosition, render} from "./utils/render.js";
 import StatisticsComponent from "./components/statistics.js";
+import TripController from "./controllers/tripcontroller.js";
+import MainNavComponent from "./components/main-nav.js";
+import MainInfoController from "./controllers/infoController.js";
+import {MenuItem} from "./components/constants.js";
 
+const AUTHORIZATION = `Basic ShdgajSS1set1i23HSDGJn2h@@`;
 
-const EVENTS_COUNT = 16;
-const allEvents = generateEvents(EVENTS_COUNT);
+const api = new API(AUTHORIZATION);
 const eventsModel = new EventsModel();
-eventsModel.setEvents(allEvents);
 
 // Рендер блока инфо в шапке Маршрут и даты
 const headerTripMainBlock = document.querySelector(`.trip-main`);
 const mainInfoController = new MainInfoController(headerTripMainBlock, eventsModel);
-mainInfoController.render();
 
 // Рендер блока в шапке навигация
 const headerTripControlsBlock = headerTripMainBlock.querySelector(`.trip-controls`);
@@ -29,14 +28,12 @@ const filterController = new FilterController(headerTripControlsBlock, eventsMod
 filterController.render();
 
 const tripEventsBlock = document.querySelector(`.trip-events`);
-const tripController = new TripController(tripEventsBlock, eventsModel);
-tripController.renderTrip();
+const tripController = new TripController(tripEventsBlock, eventsModel, mainNavComponent, api);
 
 const pageMainBodyContainer = document.querySelector(`.page-main .page-body__container`);
 const statisticsComponent = new StatisticsComponent(eventsModel);
 render(pageMainBodyContainer, statisticsComponent, RenderPosition.BEFOREEND);
 statisticsComponent.hide();
-
 
 mainNavComponent.setOnClick((menuItem) => {
   switch (menuItem) {
@@ -54,3 +51,16 @@ mainNavComponent.setOnClick((menuItem) => {
       break;
   }
 });
+
+api.getOffers()
+  .then((offers) => eventsModel.setOffers(offers));
+
+api.getDestinations()
+  .then((destinations) => eventsModel.setDestinations(destinations));
+
+api.getEvents()
+  .then((events) => {
+    eventsModel.setEvents(events);
+    mainInfoController.render();
+    tripController.renderTrip();
+  });

@@ -4,6 +4,9 @@ import {FiltersType} from "../components/constants.js";
 export default class EventsModel {
   constructor() {
     this._events = [];
+    this._destinations = [];
+    this._offers = [];
+    this._cities = [];
     this._activeFilterType = FiltersType.EVERYTHING;
     this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
@@ -16,6 +19,34 @@ export default class EventsModel {
     return this._events;
   }
 
+  getDestinationForCity(city) {
+    return this._destinations.filter((it) => it.name === city);
+  }
+
+  getDestinations() {
+    return this._destinations;
+  }
+
+  getCitiesList() {
+    return this._cities;
+  }
+
+  getOffersForType(type) {
+    const currentOffers = this._offers.filter((it) => it.type === type);
+    if (!currentOffers.length) {
+      return [];
+    }
+    return currentOffers[0].offers;
+  }
+
+  getOffers() {
+    return this._offers;
+  }
+
+  setOffers(data) {
+    this._offers = data;
+  }
+
   setFilter(filterType) {
     this._activeFilterType = filterType;
     this._callHandlers(this._filterChangeHandlers);
@@ -24,6 +55,15 @@ export default class EventsModel {
   setEvents(events) {
     this._events = Array.from(events);
     this._callHandlers(this._dataChangeHandlers);
+  }
+
+  setDestinations(data) {
+    this._destinations = data;
+    this.setCities(data);
+  }
+
+  setCities(data) {
+    data.forEach((it) => this._cities.push(it.name));
   }
 
   updateEvent(id, event) {

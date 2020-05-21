@@ -1,9 +1,5 @@
 import AbstractComponent from "./abstractComponent.js";
-
-const MenuItem = {
-  TABLE: `trip-tabs__btn--table`,
-  STATS: `trip-tabs__btn--stats`,
-};
+import {MenuItem} from "../components/constants.js";
 
 const createMainNavTemplate = () => {
   return (`<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -11,6 +7,7 @@ const createMainNavTemplate = () => {
   <a class="trip-tabs__btn" id="trip-tabs__btn--stats" href="#">Stats</a>
   </nav>`);
 };
+
 export default class MainNavComponent extends AbstractComponent {
   getTemplate() {
     return createMainNavTemplate();

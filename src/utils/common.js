@@ -34,8 +34,8 @@ const routePointDurationInHours = (start, end) => {
 
 const structureEventsByDays = (eventsList) => {
   let arrForDays = new Array(``);
-
-  eventsList.forEach((eventItem) => {
+  eventsList.sort((a, b) => a.startTime - b.startTime)
+  .forEach((eventItem) => {
     let found = true;
     let dayNum = 0;
     const eventDate = eventItem.startTime.getDate();
@@ -80,7 +80,30 @@ const getRoutePointWithUpperFirstLetter = (routePoint) => {
   return routePoint[0].toUpperCase() + routePoint.slice(1);
 };
 
+const getCheckedOffersText = (element) => {
+  const allOffersElemets = Array.from(element.querySelectorAll(`.event__offer-selector`));
+  const checkedOffersElements = allOffersElemets.filter((offerElement) => offerElement.querySelector(`.event__offer-checkbox`).checked === true);
+  return checkedOffersElements.map((offerElement) => offerElement.querySelector(`.event__offer-title`).textContent);
+};
+
+const getCheckedOffers = (offersGroup, checkedOffersText) => {
+  return checkedOffersText.map((text) => offersGroup.filter((offer) => offer.title === text)[0]);
+};
+
+const getPhotosTape = (elementEdit) => {
+  const photoes = [];
+  const photoesElements = Array.from(elementEdit.querySelectorAll(`.event__photo`));
+  photoesElements.forEach((photo) => {
+    photoes.push({
+      src: photo.currentSrc,
+      description: photo.alt,
+    });
+  });
+  return photoes;
+};
+
 export {randomNumder, formatTime, formatDate,
   routePointDuration, structureEventsByDays,
   formatMonth, isFutureEvent, isPastEvent,
-  getRoutePointWithUpperFirstLetter, routePointDurationInHours};
+  getRoutePointWithUpperFirstLetter, routePointDurationInHours,
+  getCheckedOffers, getCheckedOffersText, getPhotosTape};
