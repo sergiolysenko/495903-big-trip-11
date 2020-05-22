@@ -18,16 +18,6 @@ const createStoreStructure = (items) => {
   }, {});
 };
 
-
-const ss = (storeDestinations) => {
-  return storeDestinations.forEach((destination) => {
-    return destination.pictures.map((picture) => {
-      picture.src = `../../img/logo.png`;
-    });
-  });
-};
-
-
 export default class Provider {
   constructor(api, store) {
     this._api = api;
