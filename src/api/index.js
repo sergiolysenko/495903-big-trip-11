@@ -1,4 +1,4 @@
-import EventModel from "./models/event-model.js";
+import EventModel from "../models/event-model.js";
 
 const ApiUrlOptions = {
   POINTS: `points`,
@@ -70,6 +70,16 @@ const API = class {
 
   deleteEvent(id) {
     return this._load({url: `${ApiUrlOptions.POINTS}/${id}`, method: Method.DELETE});
+  }
+
+  sync(data) {
+    return this._load({
+      url: `${ApiUrlOptions.POINTS}/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
