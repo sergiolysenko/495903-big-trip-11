@@ -90,9 +90,7 @@ apiWithProvider.getEvents()
 
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      // TODO: сообщение при вызове;
-    }).catch(() => {
+    .catch(() => {
       throw new Error(`service worker do not registred`);
     });
 });
