@@ -403,7 +403,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
 
     const priceInput = element.querySelector(`.event__input--price`);
     priceInput.addEventListener(`change`, () => {
-      this._price = priceInput.value;
+      this._price = Math.round(priceInput.value);
       this.rerender();
     });
 
