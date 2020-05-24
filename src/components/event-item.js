@@ -3,8 +3,8 @@ import {formatTime, routePointDuration, getRoutePointWithUpperFirstLetter} from 
 import AbstractComponent from "./abstract-component.js";
 
 const generateOffers = (offers) => {
-
   const MAX_OFFERS = 2;
+
   return offers.map((offer, index) => {
     return (`<li class="event__offer ${index > MAX_OFFERS ? `visually-hidden` : ``}">
       <span class="event__offer-title">${offer.title}</span>
@@ -18,6 +18,7 @@ const createEventItemTemplate = (event) => {
   const {type, city, startTime, endTime, price, offers} = event;
   const isOfferShowing = !offers.lenght;
   const wichEventType = routePoints.transfer.includes(type) ? `transfer` : `activities`;
+  const preposition = wichEventType === `transfer` ? `to` : `in`;
 
   return (`<li class="trip-events__item">
       <div class="event">
@@ -25,7 +26,7 @@ const createEventItemTemplate = (event) => {
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">
-        ${getRoutePointWithUpperFirstLetter(type)} ${wichEventType === `transfer` ? `to` : `in`} 
+        ${getRoutePointWithUpperFirstLetter(type)} ${preposition} 
         ${city.name}</h3>
 
         <div class="event__schedule">

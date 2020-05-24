@@ -3,7 +3,12 @@ import EventModel from "../models/event-model.js";
 const ApiUrlOptions = {
   POINTS: `points`,
   DESTINATIONS: `destinations`,
-  OFFERS: `offers`
+  OFFERS: `offers`,
+  SYNC: `points/sync`,
+};
+const Code = {
+  OK: 200,
+  NOT_OK: 300,
 };
 
 const Method = {
@@ -14,7 +19,7 @@ const Method = {
 };
 
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= Code.OK && response.status < Code.NOT_OK) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -74,7 +79,7 @@ const API = class {
 
   sync(data) {
     return this._load({
-      url: `${ApiUrlOptions.POINTS}/sync`,
+      url: `${ApiUrlOptions.SYNC}`,
       method: Method.POST,
       body: JSON.stringify(data),
       headers: new Headers({"Content-Type": `application/json`})

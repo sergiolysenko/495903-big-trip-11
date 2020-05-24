@@ -1,3 +1,5 @@
+import {StoreGroup} from "../components/constants.js";
+
 export default class Store {
   constructor(key, storage) {
     this._storage = storage;
@@ -21,9 +23,9 @@ export default class Store {
   }
 
   setEvent(key, value) {
-    const eventsStore = this.getItems(`events`);
+    const eventsStore = this.getItems(StoreGroup.EVENTS);
     const updatedEvents = Object.assign({}, eventsStore, {[key]: value});
-    this.setItems(`events`, updatedEvents);
+    this.setItems(StoreGroup.EVENTS, updatedEvents);
   }
 
   setItems(key, items) {
@@ -38,9 +40,9 @@ export default class Store {
   }
 
   removeItem(key) {
-    const eventsStore = this.getItems(`events`);
+    const eventsStore = this.getItems(StoreGroup.EVENTS);
 
     delete eventsStore[key];
-    this.setItems(`events`, eventsStore);
+    this.setItems(StoreGroup.EVENTS, eventsStore);
   }
 }

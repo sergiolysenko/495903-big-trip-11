@@ -1,4 +1,5 @@
 import EventModel from "../models/event-model.js";
+import {StoreGroup} from "../components/constants.js";
 import {nanoid} from "nanoid";
 
 const isOnline = () => {
@@ -6,9 +7,8 @@ const isOnline = () => {
 };
 
 const getSyncedEvents = (items) => {
-  const ss = items.filter(({success}) => success);
-  const mm = ss.map(({payload}) => payload.point);
-  return mm;
+  return items.filter(({success}) => success)
+  .map(({payload}) => payload.point);
 };
 
 const createStoreStructure = (items) => {
@@ -30,13 +30,13 @@ export default class Provider {
       return this._api.getEvents()
       .then((events) => {
         const items = createStoreStructure(events.map((event) => event.toRAW()));
-        this._store.setItems(`events`, items);
+        this._store.setItems(StoreGroup.EVENTS, items);
 
         return events;
       });
     }
 
-    const storeEvents = Object.values(this._store.getItems(`events`));
+    const storeEvents = Object.values(this._store.getItems(StoreGroup.EVENTS));
     return Promise.resolve(EventModel.parseEvents(storeEvents));
   }
 
@@ -44,12 +44,12 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getDestinations()
       .then((destinations) => {
-        this._store.setItems(`destinations`, destinations);
+        this._store.setItems(StoreGroup.DESTINATIONS, destinations);
 
         return destinations;
       });
     }
-    const storeDestinations = this._store.getItems(`destinations`);
+    const storeDestinations = this._store.getItems(StoreGroup.DESTINATIONS);
     return Promise.resolve(storeDestinations);
   }
 
@@ -57,13 +57,13 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getOffers()
       .then((offers) => {
-        this._store.setItems(`offers`, offers);
+        this._store.setItems(StoreGroup.OFFERS, offers);
 
         return offers;
       });
     }
 
-    const storeOffers = this._store.getItems(`offers`);
+    const storeOffers = this._store.getItems(StoreGroup.OFFERS);
     return Promise.resolve(storeOffers);
   }
 
@@ -113,7 +113,7 @@ export default class Provider {
 
   sync() {
     if (isOnline()) {
-      const storeEvents = Object.values(this._store.getItems(`events`));
+      const storeEvents = Object.values(this._store.getItems(StoreGroup.EVENTS));
       return this._api.sync(storeEvents)
         .then((response) => {
           const createdEvents = getSyncedEvents(response.created);

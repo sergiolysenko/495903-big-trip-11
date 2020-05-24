@@ -5,6 +5,7 @@ const CitiesCount = {
   TWO: 2,
   THREE: 3,
 };
+
 const IndexOfCity = {
   FIRST: 0,
   SECOND: 1,

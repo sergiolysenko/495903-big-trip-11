@@ -4,8 +4,23 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {getEventsNamesOfRoute, getExpensesOnEveryEventType,
   getCountOfEachEventType, getTimeOfEachEventType} from "../utils/chart.js";
 import {getRoutePointWithUpperFirstLetter} from "../utils/common.js";
+import {TypeIcon, ChartType} from "../components/constants.js";
 
-import {BAR_HEIGHT, TypeIcon, ChartType} from "../components/constants.js";
+const ChartParameter = {
+  TYPE: `horizontalBar`,
+  BACKGROUND_COLOR: `#ffffff`,
+  MIN_BAR_LENGTH: 50,
+  BAR_THICKNESS: 44,
+  BAR_HEIGHT: 55,
+  ANCHOR: `start`,
+  OPTION_ANCHOR: `end`,
+  ALIGN: `start`,
+  FONT_COLOR: `#000000`,
+  FONT_SIZE: 13,
+  PADDING: 5,
+  TITLE_SIZE: 23,
+  TITLE_POSITION: `left`,
+};
 
 const GetChartValSimbol = {
   'MONEY': (val) => `€ ${val}`,
@@ -16,43 +31,43 @@ const GetChartValSimbol = {
 const generateChartConfig = (types, dataOfChart, chartType) => {
   return {
     plugins: [ChartDataLabels],
-    type: `horizontalBar`,
+    type: ChartParameter.TYPE,
     data: {
       labels: types,
       datasets: [{
         data: dataOfChart,
-        backgroundColor: `#ffffff`,
-        hoverBackgroundColor: `#ffffff`,
-        anchor: `start`,
-        minBarLength: 50,
-        barThickness: 44,
+        backgroundColor: ChartParameter.BACKGROUND_COLOR,
+        hoverBackgroundColor: ChartParameter.BACKGROUND_COLOR,
+        anchor: ChartParameter.ANCHOR,
+        minBarLength: ChartParameter.MIN_BAR_LENGTH,
+        barThickness: ChartParameter.BAR_THICKNESS,
       }]
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 13
+            size: ChartParameter.FONT_SIZE
           },
-          color: `#000000`,
-          anchor: `end`,
-          align: `start`,
+          color: ChartParameter.FONT_COLOR,
+          anchor: ChartParameter.OPTION_ANCHOR,
+          align: ChartParameter.ALIGN,
           formatter: GetChartValSimbol[chartType],
         }
       },
       title: {
         display: true,
         text: `${chartType}`,
-        fontColor: `#000000`,
-        fontSize: 23,
-        position: `left`
+        fontColor: ChartParameter.FONT_COLOR,
+        fontSize: ChartParameter.TITLE_SIZE,
+        position: ChartParameter.TITLE_POSITION,
       },
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: `#000000`,
-            padding: 5,
-            fontSize: 15,
+            fontColor: ChartParameter.FONT_COLOR,
+            padding: ChartParameter.PADDING,
+            fontSize: ChartParameter.FONT_SIZE,
             callback: (type) => {
               return `${TypeIcon[type]} ${getRoutePointWithUpperFirstLetter(type)}`;
             }
@@ -104,7 +119,7 @@ const createStatisticsTemplate = () => {
 const renderMoneyChart = (moneyCtx, events, allEventsTypes) => {
   const eventTypeExpenses = getExpensesOnEveryEventType(events, allEventsTypes);
 
-  moneyCtx.height = BAR_HEIGHT * allEventsTypes.length;
+  moneyCtx.height = ChartParameter.BAR_HEIGHT * allEventsTypes.length;
 
   return new Chart(moneyCtx, generateChartConfig(allEventsTypes, eventTypeExpenses, ChartType.MONEY));
 };
@@ -112,14 +127,14 @@ const renderMoneyChart = (moneyCtx, events, allEventsTypes) => {
 const renderTransportChart = (transportCtx, events, allEventsTypes) => {
   const countOfEachEventType = getCountOfEachEventType(events, allEventsTypes);
 
-  transportCtx.height = BAR_HEIGHT * allEventsTypes.length;
+  transportCtx.height = ChartParameter.BAR_HEIGHT * allEventsTypes.length;
 
   return new Chart(transportCtx, generateChartConfig(allEventsTypes, countOfEachEventType, ChartType.TRANSPORT));
 };
 
 const renderTimeSpentChart = (timeSpendCtx, events, allEventsTypes) => {
   const timeOfEachEventType = getTimeOfEachEventType(events, allEventsTypes);
-  timeSpendCtx.height = BAR_HEIGHT * allEventsTypes.length;
+  timeSpendCtx.height = ChartParameter.BAR_HEIGHT * allEventsTypes.length;
 
   return new Chart(timeSpendCtx, generateChartConfig(allEventsTypes, timeOfEachEventType, ChartType.TIME_SPENT));
 };

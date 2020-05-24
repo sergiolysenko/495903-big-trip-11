@@ -70,7 +70,7 @@ const onFetch = (evt) => {
             if (!response || response.status !== STATUS_SUCCESS || response.type !== STATUS_BASIC) {
               return response;
             }
-            
+
             const clonedResponse = response.clone();
 
             caches.open(CACHE_NAME)
