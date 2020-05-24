@@ -13,7 +13,7 @@ const getEventsNamesOfRoute = (events) => {
 const getExpensesOnEveryEventType = (events, eventsTypesOfRoute) => {
   return eventsTypesOfRoute.map((eventType) => {
     return events.filter((event) => event.type === eventType)
-    .reduce((sum, event) => sum + +event.price, 0);
+    .reduce((sum, event) => sum + Number(event.price), 0);
   });
 };
 

@@ -1,10 +1,6 @@
 import {MONTH_NAMES} from "../components/constants.js";
 import moment from "moment";
 
-const randomNumder = (min, max) => {
-  return Math.round(min - 0.5 + Math.random() * (max - min + 1));
-};
-
 const formatTime = (date) => {
   return moment(date).format(`HH:mm`);
 };
@@ -17,7 +13,7 @@ const formatMonth = (month) => `${MONTH_NAMES[month]}`;
 
 const routePointDuration = (start, end) => {
   const difference = moment.utc(moment(end).diff(moment(start)));
-  const diffInHours = moment(difference).format(`H`);
+  const diffInHours = moment(difference).format(`HH`);
   const diffInMin = moment(difference).format(`mm`);
   const diffInDays = Math.floor(moment.duration(difference).asDays());
   const isDayDiff = diffInDays >= 1 ? diffInDays + `D` : ``;
@@ -102,7 +98,7 @@ const getPhotosTape = (elementEdit) => {
   return photoes;
 };
 
-export {randomNumder, formatTime, formatDate,
+export {formatTime, formatDate,
   routePointDuration, structureEventsByDays,
   formatMonth, isFutureEvent, isPastEvent,
   getRoutePointWithUpperFirstLetter, routePointDurationInHours,

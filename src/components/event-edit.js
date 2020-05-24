@@ -9,6 +9,8 @@ const DefaultData = {
   saveButtonText: `Save`,
 };
 
+const ERROR_BORDER = `4px solid red`;
+
 const createTransferList = (routePointsItems, event) => {
   return routePointsItems.map((routePoint, index) => {
     const routePointWithUpperFirstLetter = getRoutePointWithUpperFirstLetter(routePoint);
@@ -293,7 +295,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
 
   onErrorRedBorder() {
     const form = this.getElement().querySelector(`.event--edit`);
-    form.style.outline = `4px solid red`;
+    form.style.outline = ERROR_BORDER;
   }
 
   setData(data) {
@@ -401,7 +403,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
 
     const priceInput = element.querySelector(`.event__input--price`);
     priceInput.addEventListener(`change`, () => {
-      this._price = priceInput.value;
+      this._price = Math.round(priceInput.value);
       this.rerender();
     });
 

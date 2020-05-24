@@ -22,73 +22,10 @@ const ChartType = {
   TIME_SPENT: `TIME SPENT`,
 };
 
-const BAR_HEIGHT = 55;
-
 const MenuItem = {
   TABLE: `trip-tabs__btn--table`,
   STATS: `trip-tabs__btn--stats`,
 };
-
-const cities = [`Amsterdam`, `Moscow`, `Bruge`, `Paris`, `Boston`];
-const offersItems = [
-  {
-    type: `taxi`,
-    offers: [{
-      type: `uber`,
-      title: `Order Uber`,
-      price: 20,
-    }],
-  },
-  {
-    type: `drive`,
-    offers: [{
-      type: `rent`,
-      title: `Rent a car`,
-      price: 200,
-    }],
-  },
-  {
-    type: `flight`,
-    offers: [{
-      type: `luggage`,
-      title: `Add luggage`,
-      price: 30,
-    },
-    {
-      type: `comfort`,
-      title: `Switch to comfort class`,
-      price: 100,
-    },
-    {
-      type: `meal`,
-      title: `Add meal`,
-      price: 15,
-    },
-    {
-      type: `seats`,
-      title: `Choose seats`,
-      price: 5,
-    },
-    {
-      type: `train`,
-      title: `Travel by train`,
-      price: 40,
-    }],
-  },
-  {
-    type: `sightseeing`,
-    offers: [{
-      type: `tickets`,
-      title: `Book tickets`,
-      price: 40,
-    },
-    {
-      type: `lunch`,
-      title: `Lunch in city`,
-      price: 30,
-    }],
-  }];
-
 
 const MONTH_NAMES = [
   `JAN`,
@@ -111,6 +48,12 @@ const FiltersType = {
   PAST: `past`,
 };
 
-export {routePoints, cities, offersItems,
-  BAR_HEIGHT, MONTH_NAMES, FiltersType,
+const StoreGroup = {
+  EVENTS: `events`,
+  DESTINATIONS: `destinations`,
+  OFFERS: `offers`,
+};
+
+export {routePoints,
+  MONTH_NAMES, FiltersType, StoreGroup,
   MenuItem, TypeIcon, ChartType};

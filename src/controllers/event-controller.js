@@ -4,7 +4,12 @@ import EventModel from "../models/event-model.js";
 import EventItemComponent from "../components/event-item.js";
 import EventItemEditComponent from "../components/event-edit.js";
 
-const SHAKE_ANIMATION_TIMEOUT = 600;
+const ShakeAnimation = {
+  TIMEOUT: 600,
+  DURATION: 1000,
+};
+
+const RADIX = 10;
 
 const Mode = {
   NEW_EVENT: `new`,
@@ -34,7 +39,7 @@ const parseFormData = (formData, id, eventsModel, element) => {
   const isDescription = description ? description.textContent : ``;
   return new EventModel({
     "id": id,
-    "base_price": parseInt(formData.get(`event-price`), 10),
+    "base_price": parseInt(formData.get(`event-price`), RADIX),
     "date_from": new Date(formData.get(`event-start-time`)),
     "date_to": new Date(formData.get(`event-end-time`)),
     "type": formData.get(`event-type`),
@@ -145,14 +150,14 @@ export default class EventController {
       saveButtonText: `Save`,
       deleteButtonText: `Delete`,
     });
-    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventEditComponent.getElement().style.animation = `shake ${ShakeAnimation.TIMEOUT / ShakeAnimation.DURATION}s`;
+    this._eventComponent.getElement().style.animation = `shake ${ShakeAnimation.TIMEOUT / ShakeAnimation.DURATION}s`;
 
     setTimeout(() => {
       this._eventEditComponent.getElement().style.animation = ``;
       this._eventComponent.getElement().style.animation = ``;
       this._eventEditComponent.onErrorRedBorder();
-    }, SHAKE_ANIMATION_TIMEOUT);
+    }, ShakeAnimation.TIMEOUT);
   }
 
   _replaceEventToEdit() {
