@@ -13,7 +13,7 @@ const formatMonth = (month) => `${MONTH_NAMES[month]}`;
 
 const routePointDuration = (start, end) => {
   const difference = moment.utc(moment(end).diff(moment(start)));
-  const diffInHours = moment(difference).format(`H`);
+  const diffInHours = moment(difference).format(`HH`);
   const diffInMin = moment(difference).format(`mm`);
   const diffInDays = Math.floor(moment.duration(difference).asDays());
   const isDayDiff = diffInDays >= 1 ? diffInDays + `D` : ``;
