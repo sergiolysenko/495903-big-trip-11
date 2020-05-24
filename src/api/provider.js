@@ -23,6 +23,7 @@ export default class Provider {
   constructor(api, store) {
     this._api = api;
     this._store = store;
+    this._sync = false;
   }
 
   getEvents() {
@@ -67,6 +68,10 @@ export default class Provider {
     return Promise.resolve(storeOffers);
   }
 
+  getSyncStatus() {
+    return this._sync;
+  }
+
   createEvent(event) {
     if (isOnline()) {
       return this._api.createEvent(event)
@@ -78,7 +83,7 @@ export default class Provider {
     }
     const localNewEventId = nanoid();
     const localNewEvent = EventModel.clone(Object.assign(event, {id: localNewEventId}));
-
+    this._sync = true;
     this._store.setEvent(localNewEvent.id, localNewEvent.toRAW());
 
     return Promise.resolve(localNewEvent);
@@ -93,7 +98,7 @@ export default class Provider {
           return newEvent;
         });
     }
-
+    this._sync = true;
     const localEvent = EventModel.clone(Object.assign(data, {id}));
     this._store.setEvent(id, localEvent.toRAW());
 
@@ -107,12 +112,13 @@ export default class Provider {
     }
 
     this._store.removeItem(id);
-
+    this._sync = true;
     return Promise.resolve();
   }
 
   sync() {
     if (isOnline()) {
+      this._sync = false;
       const storeEvents = Object.values(this._store.getItems(StoreGroup.EVENTS));
       return this._api.sync(storeEvents)
         .then((response) => {

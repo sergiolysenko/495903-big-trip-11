@@ -11,7 +11,7 @@ import MainInfoController from "./controllers/info-controller.js";
 import {MenuItem} from "./components/constants.js";
 import NewEventButtonComponent from "./components/new-event-button.js";
 
-const AUTHORIZATION = `Basic Shdga2et1i23HSDGJn2h@@`;
+const AUTHORIZATION = `Basic Shdga2et1i23HSDG`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
@@ -97,8 +97,9 @@ window.addEventListener(`load`, () => {
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);
-
-  apiWithProvider.sync();
+  if (apiWithProvider.getSyncStatus()) {
+    apiWithProvider.sync();
+  }
 });
 
 window.addEventListener(`offline`, () => {
