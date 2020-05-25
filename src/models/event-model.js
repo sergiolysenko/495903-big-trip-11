@@ -13,8 +13,8 @@ export default class EventModel {
   toRAW() {
     return {
       "base_price": this.price,
-      "date_from": this.startTime.toISOString(),
-      "date_to": this.endTime.toISOString(),
+      "date_from": this.startTime,
+      "date_to": this.endTime,
       "destination": this.city,
       "id": this.id,
       "is_favorite": this.isFavorite,
@@ -23,12 +23,12 @@ export default class EventModel {
     };
   }
 
-  static parseEvent(data) {
+  static parse(data) {
     return new EventModel(data);
   }
 
   static parseEvents(data) {
-    return data.map(EventModel.parseEvent);
+    return data.map(EventModel.parse);
   }
 
   static clone(data) {

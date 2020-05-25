@@ -17,6 +17,7 @@ const Method = {
   PUT: `PUT`,
   DELETE: `DELETE`,
 };
+const headerData = {"Content-Type": `application/json`};
 
 const checkStatus = (response) => {
   if (response.status >= Code.OK && response.status < Code.NOT_OK) {
@@ -53,10 +54,10 @@ const API = class {
       url: ApiUrlOptions.POINTS,
       method: Method.POST,
       body: JSON.stringify(event.toRAW()),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: new Headers(headerData)
     })
       .then((response) => response.json())
-      .then(EventModel.parseEvent);
+      .then(EventModel.parse);
   }
 
   updateEvent(id, data) {
@@ -64,10 +65,10 @@ const API = class {
       url: `${ApiUrlOptions.POINTS}/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: new Headers(headerData)
     })
       .then((response) => response.json())
-      .then(EventModel.parseEvent)
+      .then(EventModel.parse)
       .catch((err) => {
         throw err;
       });
@@ -82,7 +83,7 @@ const API = class {
       url: `${ApiUrlOptions.SYNC}`,
       method: Method.POST,
       body: JSON.stringify(data),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: new Headers(headerData)
     })
       .then((response) => response.json());
   }

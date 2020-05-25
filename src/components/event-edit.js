@@ -336,6 +336,19 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
     return new FormData(form);
   }
 
+  generateFlatpickr(element, {enableTime = true, minDate = null, altFormat = `d/m/y H:i`,
+    altInput = true, allowInput = true, defaultDate, onClose}) {
+    return flatpickr(element, {
+      enableTime,
+      minDate,
+      altFormat,
+      altInput,
+      allowInput,
+      defaultDate,
+      onClose,
+    });
+  }
+
   _onTypeChange() {
     this._offers = this._event.offers;
     this._currentOfferGroup = this._eventsModel.getOffersForType(this._type);
@@ -352,11 +365,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
     }
 
     const startDate = this.getElement().querySelector(`#event-start-time-1`);
-    this._flatpickrStart = flatpickr(startDate, {
-      enableTime: true,
-      altFormat: `d/m/y H:i`,
-      altInput: true,
-      allowInput: true,
+    this._flatpickrStart = this.generateFlatpickr(startDate, {
       defaultDate: this._startTime || `today`,
       onClose: (selectedDates, dateStr) => {
         this._startTime = dateStr;
@@ -366,12 +375,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
     });
 
     const endTime = this.getElement().querySelector(`#event-end-time-1`);
-    this._flatpickrEnd = flatpickr(endTime, {
-      enableTime: true,
-      minDate: startDate.value,
-      altFormat: `d/m/y H:i`,
-      altInput: true,
-      allowInput: true,
+    this._flatpickrEnd = this.generateFlatpickr(endTime, {
       defaultDate: this._endTime || `today`,
       onClose: (selectedDates, dateStr) => {
         this._endTime = dateStr;

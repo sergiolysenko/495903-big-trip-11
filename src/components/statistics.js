@@ -162,7 +162,6 @@ export default class StatisticsComponent extends AbstractSmartComponent {
     this.rerender(this._events);
   }
 
-  recoveryListeners() {}
 
   rerender(events) {
     this._events = events;
@@ -203,5 +202,7 @@ export default class StatisticsComponent extends AbstractSmartComponent {
       this._timeSpendChart = null;
     }
   }
+
+  recoveryListeners() {}
 }
 

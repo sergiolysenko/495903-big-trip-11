@@ -38,15 +38,15 @@ export default class FilterController {
     }
   }
 
-  _onFilterChange(filterType) {
-    this._eventModel.setFilter(filterType);
-    this._activeFilterType = filterType;
-  }
-
   setDefaultFilter() {
     this._eventModel.setFilter(FiltersType.EVERYTHING);
     this._activeFilterType = FiltersType.EVERYTHING;
     this._onDataChange();
+  }
+
+  _onFilterChange(filterType) {
+    this._eventModel.setFilter(filterType);
+    this._activeFilterType = filterType;
   }
 
   _onDataChange() {

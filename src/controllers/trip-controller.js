@@ -80,6 +80,28 @@ export default class TripController {
     }
   }
 
+  onCreateNewEvent() {
+    this._newEventButtonComponent.toggleDisabledNewEvent();
+    this._onFilterChange();
+    this.createEvent();
+  }
+
+  createEvent() {
+    if (this._creatingEvent) {
+      return;
+    }
+    const container = document.querySelector(`.trip-events__list`);
+    if (!container) {
+      const tripDaysBlock = this._container.querySelector(`.trip-days`);
+      const tripDayComponent = new TripDayComponent();
+      remove(this._noPointsComponent);
+      render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
+    }
+    this._creatingEvent = new EventController(container, this._onDataChange, this._onViewChange, this._eventsModel);
+
+    this._creatingEvent.render(emptyEvent, EventControllerMode.NEW_EVENT);
+  }
+
   _onDataChange(eventController, oldData, newData, dontClose = false) {
     if (oldData === emptyEvent) {
       this._creatingEvent = null;
@@ -148,24 +170,6 @@ export default class TripController {
     }
   }
 
-  createEvent() {
-    if (this._creatingEvent) {
-      return;
-    }
-    if (!document.querySelector(`.trip-events__list`)) {
-      const tripDaysBlock = this._container.querySelector(`.trip-days`);
-      const tripDayComponent = new TripDayComponent();
-      remove(this._noPointsComponent);
-      render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
-    }
-
-    const container = document.querySelector(`.trip-events__list`);
-
-    this._creatingEvent = new EventController(container, this._onDataChange, this._onViewChange, this._eventsModel);
-
-    this._creatingEvent.render(emptyEvent, EventControllerMode.NEW_EVENT);
-  }
-
   _removeEvents() {
     if (this._renderedEventsControllers) {
       this._renderedEventsControllers.forEach((renderedEvent) => renderedEvent.destroy());
@@ -177,12 +181,6 @@ export default class TripController {
   _updateEvents() {
     this._removeEvents();
     this._renderDays(this._eventsModel.getEvents(), this._currentTypeSort);
-  }
-
-  onCreateNewEvent() {
-    this._newEventButtonComponent.toggleDisabledNewEvent();
-    this._onFilterChange();
-    this.createEvent();
   }
 
   _onFilterChange() {

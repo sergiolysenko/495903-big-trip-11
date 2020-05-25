@@ -13,7 +13,7 @@ const getFirstDayOfRoute = (events) => {
 
 const getLastDayOfRoute = (events) => {
   const sortedByFirstDay = getSortedEventsByDay(events);
-  const lastDayOfRoute = sortedByFirstDay[sortedByFirstDay.length - 1].endTime.getDate();
+  const lastDayOfRoute = sortedByFirstDay.pop().endTime.getDate();
   return lastDayOfRoute;
 };
 
@@ -25,7 +25,7 @@ const getFirstMonthOfRoute = (events) => {
 
 const getLastMonthOfRoute = (events) => {
   const sortedByFirstDay = getSortedEventsByDay(events);
-  const lastMonthOfRoute = sortedByFirstDay[sortedByFirstDay.length - 1].endTime.getMonth();
+  const lastMonthOfRoute = sortedByFirstDay.pop().endTime.getMonth();
   return formatMonth(lastMonthOfRoute);
 };
 

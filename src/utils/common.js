@@ -29,7 +29,7 @@ const routePointDurationInHours = (start, end) => {
 };
 
 const structureEventsByDays = (eventsList) => {
-  const arrForDays = new Array(``);
+  const days = new Array(``);
   eventsList.sort((a, b) => a.startTime - b.startTime)
   .forEach((eventItem) => {
     let found = true;
@@ -38,7 +38,7 @@ const structureEventsByDays = (eventsList) => {
     const eventMonth = eventItem.startTime.getMonth();
     const eventYear = eventItem.startTime.getFullYear();
 
-    for (const dayObj of arrForDays) {
+    for (const dayObj of days) {
       if (dayObj.day === eventDate
         && dayObj.events[0].startTime.getMonth() === eventMonth
         && dayObj.events[0].startTime.getFullYear() === eventYear) {
@@ -50,7 +50,7 @@ const structureEventsByDays = (eventsList) => {
       }
     }
     if (!found) {
-      arrForDays.push(
+      days.push(
           {
             day: eventDate,
             month: eventMonth,
@@ -60,8 +60,8 @@ const structureEventsByDays = (eventsList) => {
           });
     }
   });
-  arrForDays.shift();
-  return arrForDays;
+  days.shift();
+  return days;
 };
 
 const isFutureEvent = (startDate, dateNow) => {
