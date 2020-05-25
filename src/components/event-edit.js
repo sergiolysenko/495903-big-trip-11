@@ -337,7 +337,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
   }
 
   generateFlatpickr(element, {enableTime = true, minDate = null, altFormat = `d/m/y H:i`,
-    altInput = true, allowInput = true, defaultDate, onClose}) {
+    altInput = true, allowInput = false, defaultDate, onClose}) {
     return flatpickr(element, {
       enableTime,
       minDate,
@@ -399,7 +399,7 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
     const destList = element.querySelector(`.event__input--destination`);
     destList.addEventListener(`change`, () => {
       if (!destList.value || !this._cities.includes(destList.value)) {
-        destList.value = this._city.name;
+        destList.value = this._city.name ? this._city.name : this._cities[0];
       }
       this._city = this._citiesInfo.filter((cityIfEmptyEvent) => cityIfEmptyEvent.name === destList.value)[0];
       this.rerender();
@@ -423,6 +423,5 @@ export default class EventItemEditComponent extends AbstractSmartComponent {
       });
     }
   }
-
 }
 
