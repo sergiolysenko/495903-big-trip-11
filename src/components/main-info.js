@@ -1,6 +1,7 @@
 import AbstractComponent from "./abstract-component.js";
 
 const CitiesCount = {
+  ZERO: 0,
   ONE: 1,
   TWO: 2,
   THREE: 3,
@@ -14,6 +15,8 @@ const IndexOfCity = {
 
 const generateCitiesRoute = (citiesList) => {
   switch (citiesList.length) {
+    case CitiesCount.ZERO:
+      return `<h1 class="trip-info__title"></h1>`;
     case CitiesCount.ONE:
       return `<h1 class="trip-info__title">${citiesList[IndexOfCity.FIRST]}</h1>`;
     case CitiesCount.TWO:

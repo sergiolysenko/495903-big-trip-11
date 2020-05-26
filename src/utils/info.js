@@ -7,7 +7,7 @@ const getSortedEventsByDay = (events) => {
 
 const getFirstDayOfRoute = (events) => {
   if (!events.length) {
-    return undefined;
+    return ``;
   }
   const sortedByFirstDay = getSortedEventsByDay(events);
   const firstDayOfRoute = sortedByFirstDay[0].startTime.getDate();
@@ -16,7 +16,7 @@ const getFirstDayOfRoute = (events) => {
 
 const getLastDayOfRoute = (events) => {
   if (!events.length) {
-    return undefined;
+    return ``;
   }
   const sortedByFirstDay = getSortedEventsByDay(events);
   const lastDayOfRoute = sortedByFirstDay.pop().endTime.getDate();
@@ -25,7 +25,7 @@ const getLastDayOfRoute = (events) => {
 
 const getFirstMonthOfRoute = (events) => {
   if (!events.length) {
-    return undefined;
+    return ``;
   }
   const sortedByFirstDay = getSortedEventsByDay(events);
   const firstMonthOfRoute = sortedByFirstDay[0].startTime.getMonth();
@@ -34,7 +34,7 @@ const getFirstMonthOfRoute = (events) => {
 
 const getLastMonthOfRoute = (events) => {
   if (!events.length) {
-    return undefined;
+    return ``;
   }
   const sortedByFirstDay = getSortedEventsByDay(events);
   const lastMonthOfRoute = sortedByFirstDay.pop().endTime.getMonth();
@@ -43,14 +43,14 @@ const getLastMonthOfRoute = (events) => {
 
 const getOffersCost = (event) => {
   if (!event) {
-    return undefined;
+    return ``;
   }
   return event.offers.reduce((sum, offer) => sum + offer.price, 0);
 };
 
 const getTotalCost = (events) => {
   if (!events.length) {
-    return undefined;
+    return ``;
   }
   const offersCost = events.reduce((sum, event) => sum + getOffersCost(event), 0);
   const eventPrice = events.reduce((sum, event) => sum + Number(event.price), 0);
@@ -59,7 +59,7 @@ const getTotalCost = (events) => {
 
 const getAllCityOnRoute = (events) => {
   if (!events.length) {
-    return undefined;
+    return [];
   }
   const sortedByFirstDay = getSortedEventsByDay(events);
   const citiesList = sortedByFirstDay.map((event) => event.city.name);
