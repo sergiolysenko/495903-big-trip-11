@@ -6,7 +6,7 @@ export default class NewEventButtonComponent {
   }
 
   toggleDisabledNewEvent() {
-    this._newEventButton.disabled = this._newEventButton.disabled ? false : true;
+    this._newEventButton.disabled = !this._newEventButton.disabled;
   }
 
   setOnClickHandler(handler) {
@@ -22,5 +22,4 @@ export default class NewEventButtonComponent {
   _callHandlers(handlers) {
     handlers.forEach((handler) => handler());
   }
-
 }

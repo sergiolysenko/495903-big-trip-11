@@ -28,6 +28,7 @@ export default class TripController {
   constructor(container, eventsModel, newEventButtonComponent, api) {
     this._container = container;
     this._eventsModel = eventsModel;
+    this._eventsList = document.querySelector(`.trip-events__list`);
     this._api = api;
     this._currentTypeSort = SortType.EVENT;
     this._renderedEventsControllers = null;
@@ -90,13 +91,13 @@ export default class TripController {
     if (this._creatingEvent) {
       return;
     }
-    const container = document.querySelector(`.trip-events__list`);
-    if (!container) {
+    if (!document.querySelector(`.trip-events__list`)) {
       const tripDaysBlock = this._container.querySelector(`.trip-days`);
       const tripDayComponent = new TripDayComponent();
       remove(this._noPointsComponent);
       render(tripDaysBlock, tripDayComponent, RenderPosition.BEFOREEND);
     }
+    const container = document.querySelector(`.trip-events__list`);
     this._creatingEvent = new EventController(container, this._onDataChange, this._onViewChange, this._eventsModel);
 
     this._creatingEvent.render(emptyEvent, EventControllerMode.NEW_EVENT);
